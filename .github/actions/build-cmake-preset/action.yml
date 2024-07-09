@@ -41,6 +41,11 @@ inputs:
     default: "x64"
     description: "MSVC build architecture to use"
     required: false
+  linux-docker-image:
+    type: string
+    default: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
+    description: "Docker image used under Linux"
+    required: false
  
 outputs:
   package-name:
@@ -60,8 +65,14 @@ runs:
   using: composite
   steps:
 
-    - name: pull docker container
-      run: docker pull ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
+    - name: (setup/linux) pull docker image (${{ inputs.linux-docker-image }}) for build environment
+      run: docker pull "${{ inputs.linux-docker-image }}"
+      if: runner.os == 'Linux'
+      shell: bash
+
+    - name: (configure/linux) cmake preset ${{ inputs.preset-name }}
+      run: |
+        docker run -v "${{ github.workspace }}:/src" "${{ inputs.linux-docker-image }}" gcc --version
       if: runner.os == 'Linux'
       shell: bash
 
