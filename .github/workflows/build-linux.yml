@@ -25,9 +25,8 @@ jobs:
     runs-on: ubuntu-22.04
     if: inputs.run_build == true
     steps:
-      - name: run docker container
-        run: |
-          echo "Hello World!"
+      - name: pull docker container
+        run: docker pull ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
 
 #  clang14-release:
 #    name: Clang 14 release Builds for Ubuntu 22.04
