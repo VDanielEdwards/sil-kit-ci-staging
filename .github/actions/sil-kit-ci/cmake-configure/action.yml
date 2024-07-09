@@ -76,5 +76,9 @@ runs:
               -S /s/sil-kit \
               -B /b \
               -G Ninja \
-              -D CMAKE_BUILD_TYPE=Release
+              -D CMAKE_BUILD_TYPE=Release \
+              -D SILKIT_BUILD_DEMOS=OFF \
+              -D SILKIT_BUILD_UTILITIES=OFF \
+              -D SILKIT_BUILD_DASHBOARD=OFF \
+              -D SILKIT_BUILD_DOCS=OFF
 
