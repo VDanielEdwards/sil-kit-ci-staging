@@ -25,11 +25,24 @@ inputs:
     description: The package directory for use by the cmake actions
     required: true
 
+  upload-artifacts:
+    description: Determines if artifacts created by the actions should be uploaded
+    required: true
+
+  retention-days:
+    description: Determines the number of days any uploaded artifacts should be retained
+    required: true
+
+  package-name:
+    description: Name of the package to upload as an artifact
+    required: true
+
 runs:
   using: composite
   steps:
 
     - name: (linux) package cmake project
+      id: cmake-package
       if: runner.os == 'Linux'
       shell: bash
       run: |
@@ -41,3 +54,21 @@ runs:
             cmake \
               --build /b \
               --target package
+
+        echo "package-path=${{ inputs.cmake-package-directory }}/*/ZIP/SilKit-*-*.zip" >> "$GITHUB_OUTPUT"
+
+    - name: (windows) package cmake project
+      id: cmake-package
+      if: runner.os == 'Windows'
+      shell: powershell
+      run: |
+        echo "FFFFFFFF!!"
+
+    - name: upload package
+      if: ${{ inputs.upload-artifacts == 'true' }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.package-name }}
+        path: ${{ steps.cmake-package.outputs.package-path }}
+        if-no-files-found: 'error'
+        retention-days: ${{ inputs.retention-days }}

@@ -13,6 +13,16 @@ inputs:
     required: false
     default: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
 
+  upload-artifacts:
+    description: Determines if artifacts created by the actions should be uploaded
+    required: false
+    default: 'false'
+
+  retention-days:
+    description: Determines the number of days any uploaded artifacts should be retained
+    required: false
+    default: '1'
+
 runs:
   using: composite
   steps:
@@ -70,3 +80,5 @@ runs:
         cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
+        upload-artifacts: ${{ inputs.upload-artifacts }}
+        retention-days: ${{ inputs.retention-days }}
