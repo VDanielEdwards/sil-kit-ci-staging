@@ -47,7 +47,7 @@ runs:
       if: runner.os == 'Windows'
       shell: bash
       run: |
-        ctest \
-          --build ${{ inputs.cmake-build-directory }} \
-          -C Release \
+        ctest `
+          --build "${{ inputs.cmake-build-directory }}" `
+          -C Release `
           -R '^Test_'

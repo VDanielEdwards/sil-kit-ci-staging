@@ -42,14 +42,11 @@ runs:
   using: composite
   steps:
 
-    - name: (all) compute directories
+    - name: compute directories
+      uses: ./.github/actions/sil-kit-ci/dirs
       id: dirs
-      if: runner.os == 'Linux'
-      shell: bash
-      run: |
-        echo 'cmake-source=${{ github.workspace}}/s/sil-kit' >> "$GITHUB_OUTPUT"
-        echo 'cmake-build=${{ github.workspace}}/b/sil-kit/${{ inputs.preset-name }}' >> "$GITHUB_OUTPUT"
-        echo 'cmake-package=${{ github.workspace}}/p/sil-kit/${{ inputs.preset-name }}' >> "$GITHUB_OUTPUT"
+      with:
+        preset-name: ${{ inputs.preset-name }}
 
     - name: setup
       uses: ./.github/actions/sil-kit-ci/setup

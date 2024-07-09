@@ -50,16 +50,15 @@ runs:
       if: runner.os == 'Windows'
       shell: powershell
       run: |
-        rm -re -fo "${{ inputs.cmake-build-directory }}"
-        rm -re -fo "${{ inputs.cmake-package-directory }}"
+        if (Test-Path "${{ inputs.cmake-build-directory }}") { Remove-Item -Recurse -Force "${{ inputs.cmake-build-directory }}" }
+        if (Test-Path "${{ inputs.cmake-package-directory }}") { Remove-Item -Recurse -Force "${{ inputs.cmake-package-directory }}" }
 
     - name: (linux) create build and package directories
       if: runner.os == 'Linux'
       shell: bash
       run: |
-        mkdir -p \
-          "${{ inputs.cmake-build-directory }}" \
-          "${{ inputs.cmake-package-directory }}"
+        mkdir -p "${{ inputs.cmake-build-directory }}"
+        mkdir -p "${{ inputs.cmake-package-directory }}"
 
     - name: (windows) cleanup build and package directories
       if: runner.os == 'Windows'

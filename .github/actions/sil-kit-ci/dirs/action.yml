@@ -1,0 +1,45 @@
+name: sil-kil-ci/dirs
+
+description: Package the project with CMake (CTest).
+
+inputs:
+
+  preset-name:
+    description: The preset name from CMakePresets.json.
+    required: true
+
+outputs:
+
+  cmake-source:
+    description: The source directory for use by the cmake actions
+    value: ${{ join(steps.*.outputs.cmake-source, '') }}
+
+  cmake-build:
+    description: The build directory for use by the cmake actions
+    value: ${{ join(steps.*.outputs.cmake-build, '') }}
+
+  cmake-package:
+    description: The package directory for use by the cmake actions
+    value: ${{ join(steps.*.outputs.cmake-package, '') }}
+
+runs:
+  using: composite
+  steps:
+
+    - name: (linux) compute directories
+      id: linux-dirs
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        echo 'cmake-source=${{ github.workspace}}/s/sil-kit' >> "$GITHUB_OUTPUT"
+        echo 'cmake-build=${{ github.workspace}}/b/sil-kit/${{ inputs.preset-name }}' >> "$GITHUB_OUTPUT"
+        echo 'cmake-package=${{ github.workspace}}/p/sil-kit/${{ inputs.preset-name }}' >> "$GITHUB_OUTPUT"
+
+    - name: (windows) compute directories
+      id: windows-dirs
+      if: runner.os == 'Windows'
+      shell: powershell
+      run: |
+        echo 'cmake-source=${{ github.workspace}}\s\sil-kit' >> "$env:GITHUB_OUTPUT"
+        echo 'cmake-build=${{ github.workspace}}\b\sil-kit\${{ inputs.preset-name }}' >> "$env:GITHUB_OUTPUT"
+        echo 'cmake-package=${{ github.workspace}}\p\sil-kit\${{ inputs.preset-name }}' >> "$env:GITHUB_OUTPUT"

@@ -44,8 +44,8 @@ runs:
 
     - name: (windows) build cmake project
       if: runner.os == 'Windows'
-      shell: bash
+      shell: powershell
       run: |
-        cmake \
-          --build ${{ inputs.cmake-build-directory }} \
+        cmake `
+          --build "${{ inputs.cmake-build-directory }}" `
           --parallel

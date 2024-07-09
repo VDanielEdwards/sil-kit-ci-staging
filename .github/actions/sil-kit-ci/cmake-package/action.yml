@@ -36,7 +36,7 @@ outputs:
 
   package-path:
     description: Path to the package
-    value: ${{ steps.*.outputs.package-path }}
+    value: ${{ join(steps.*.outputs.package-path, '') }}
 
 runs:
   using: composite
@@ -61,8 +61,8 @@ runs:
       if: runner.os == 'Windows'
       shell: powershell
       run: |
-        cmake \
-          --build ${{ inputs.cmake-build-directory }} \
+        cmake `
+          --build "${{ inputs.cmake-build-directory }}" `
           --target package
 
         echo "package-path=${{ inputs.cmake-package-directory }}/*/ZIP/SilKit-*-*.zip" >> "$env:GITHUB_OUTPUT"
