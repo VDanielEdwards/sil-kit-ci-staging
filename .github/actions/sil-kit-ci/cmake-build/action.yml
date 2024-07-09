@@ -41,3 +41,11 @@ runs:
             cmake \
               --build /b \
               --parallel
+
+    - name: (windows) build cmake project
+      if: runner.os == 'Windows'
+      shell: bash
+      run: |
+        cmake \
+          --build ${{ inputs.cmake-build-directory }} \
+          --parallel

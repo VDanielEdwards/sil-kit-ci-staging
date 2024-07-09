@@ -48,3 +48,18 @@ runs:
               -D SILKIT_BUILD_UTILITIES=OFF \
               -D SILKIT_BUILD_DASHBOARD=OFF \
               -D SILKIT_BUILD_DOCS=OFF
+
+    - name: (windows x64) configure cmake project
+      if: runner.os == 'Windows'
+      shell: powershell
+      run: |
+        cmake \
+          -S ${{ inputs.cmake-source-directory }} \
+          -B ${{ inputs.cmake-build-directory }} \
+          -G Ninja \
+          -D CMAKE_BUILD_TYPE=Release \
+          -D CPACK_PACKAGE_DIRECTORY=${{ inputs.cmake-package-directory }} \
+          -D SILKIT_BUILD_DEMOS=OFF \
+          -D SILKIT_BUILD_UTILITIES=OFF \
+          -D SILKIT_BUILD_DASHBOARD=OFF \
+          -D SILKIT_BUILD_DOCS=OFF

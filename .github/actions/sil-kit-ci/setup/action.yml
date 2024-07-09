@@ -9,6 +9,14 @@ inputs:
     description: Docker image used under Linux
     required: false
 
+  msvc-arch:
+    description: Target architecture used under Windows/MSVC
+    required: true
+
+  msvc-toolset:
+    description: Target toolset used under Windows/MSVC
+    required: true
+
   cmake-source-directory:
     description: The source directory for use by the cmake actions
     required: true
@@ -35,9 +43,15 @@ runs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
-        rm -rf \
-          "${{ inputs.cmake-build-directory }}" \
-          "${{ inputs.cmake-package-directory }}"
+        rm -rf "${{ inputs.cmake-build-directory }}"
+        rm -rf "${{ inputs.cmake-package-directory }}"
+
+    - name: (windows) cleanup build and package directories
+      if: runner.os == 'Windows'
+      shell: powershell
+      run: |
+        rm -re -fo "${{ inputs.cmake-build-directory }}"
+        rm -re -fo "${{ inputs.cmake-package-directory }}"
 
     - name: (linux) create build and package directories
       if: runner.os == 'Linux'
@@ -47,7 +61,21 @@ runs:
           "${{ inputs.cmake-build-directory }}" \
           "${{ inputs.cmake-package-directory }}"
 
+    - name: (windows) cleanup build and package directories
+      if: runner.os == 'Windows'
+      shell: powershell
+      run: |
+        $null = New-Item -ItemType Directory -Force "${{ inputs.cmake-build-directory }}"
+        $null = New-Item -ItemType Directory -Force "${{ inputs.cmake-package-directory }}"
+
     - name: (linux) pull docker image for building via cmake
       if: runner.os == 'Linux'
       shell: bash
       run: docker pull "${{ inputs.linux-docker-image }}"
+
+    - name: (windows) setup msvc environment
+      if: runner.os == 'Windows'
+      uses: ilammy/msvc-dev-cmd@v1.12.0
+      with:
+        arch: ${{ inputs.msvc-arch }}
+        toolset: ${{ inputs.msvc-toolset }}

@@ -20,8 +20,8 @@ on:
 
 jobs:
 
-  ci-testing:
-    name: Linux Build
+  build-linux:
+    name: Build Linux
     environment: public-github-runners
     runs-on: ubuntu-22.04
     if: inputs.run_build == true
@@ -37,9 +37,34 @@ jobs:
 
       - name: run ci build
         uses: ./.github/actions/sil-kit-ci/run
-        id: setup
         with:
           preset-name: linux-release
+          upload-artifacts: true
+          retention-days: 1
+          package-name: silkit-linux.zip
+
+  build-windows-x64:
+    name: Build Windows (x64)
+    environment: public-github-runners
+    runs-on: windows-2019
+    if: inputs.run_build == true
+
+    steps:
+
+      - name: checkout sil-kit workflows and actions
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          sparse-checkout: |
+            .github
+
+      - name: run ci build
+        uses: ./.github/actions/sil-kit-ci/run
+        with:
+          preset-name: win-x64
+          upload-artifacts: true
+          retention-days: 1
+          package-name: silkit-windows-x64.zip
 
 #  clang14-release:
 #    name: Clang 14 release Builds for Ubuntu 22.04

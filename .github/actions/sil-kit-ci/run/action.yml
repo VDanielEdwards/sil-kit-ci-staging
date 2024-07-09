@@ -13,6 +13,16 @@ inputs:
     required: false
     default: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
 
+  msvc-arch:
+    description: Target architecture used under Windows/MSVC
+    required: false
+    default: 'x64'
+
+  msvc-toolset:
+    description: Target toolset used under Windows/MSVC
+    required: false
+    default: '14.1'
+
   upload-artifacts:
     description: Determines if artifacts created by the actions should be uploaded
     required: false
@@ -22,6 +32,11 @@ inputs:
     description: Determines the number of days any uploaded artifacts should be retained
     required: false
     default: '1'
+
+  package-name:
+    description: Name of the package to upload as an artifact
+    required: false
+    default: 'sil-kit.zip'
 
 runs:
   using: composite
@@ -41,6 +56,8 @@ runs:
       id: setup
       with:
         linux-docker-image: ${{ inputs.linux-docker-image }}
+        msvc-arch: ${{ inputs.msvc-arch }}
+        msvc-toolset: ${{ inputs.msvc-toolset }}
         cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
@@ -50,6 +67,8 @@ runs:
       id: cmake-configure
       with:
         linux-docker-image: ${{ inputs.linux-docker-image }}
+        msvc-arch: ${{ inputs.msvc-arch }}
+        msvc-toolset: ${{ inputs.msvc-toolset }}
         cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
@@ -59,6 +78,8 @@ runs:
       id: cmake-build
       with:
         linux-docker-image: ${{ inputs.linux-docker-image }}
+        msvc-arch: ${{ inputs.msvc-arch }}
+        msvc-toolset: ${{ inputs.msvc-toolset }}
         cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
@@ -68,6 +89,8 @@ runs:
       id: cmake-test
       with:
         linux-docker-image: ${{ inputs.linux-docker-image }}
+        msvc-arch: ${{ inputs.msvc-arch }}
+        msvc-toolset: ${{ inputs.msvc-toolset }}
         cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
@@ -77,8 +100,17 @@ runs:
       id: cmake-package
       with:
         linux-docker-image: ${{ inputs.linux-docker-image }}
+        msvc-arch: ${{ inputs.msvc-arch }}
+        msvc-toolset: ${{ inputs.msvc-toolset }}
         cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
+
+    - name: upload-artifacts
+      uses: ./.github/actions/sil-kit-ci/upload-artifacts
+      id: upload-artifacts
+      with:
         upload-artifacts: ${{ inputs.upload-artifacts }}
         retention-days: ${{ inputs.retention-days }}
+        package-name: ${{ inputs.package-name }}
+        package-path: ${{ steps.cmake-package.outputs.package-name }}

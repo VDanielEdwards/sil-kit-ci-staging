@@ -9,9 +9,16 @@ inputs:
     required: true
 
   linux-docker-image:
-    default: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
     description: Docker image used under Linux
-    required: false
+    required: true
+
+  msvc-arch:
+    description: Target architecture used under Windows/MSVC
+    required: true
+
+  msvc-toolset:
+    description: Target toolset used under Windows/MSVC
+    required: true
 
   cmake-source-directory:
     description: The source directory for use by the cmake actions
@@ -25,24 +32,17 @@ inputs:
     description: The package directory for use by the cmake actions
     required: true
 
-  upload-artifacts:
-    description: Determines if artifacts created by the actions should be uploaded
-    required: true
+outputs:
 
-  retention-days:
-    description: Determines the number of days any uploaded artifacts should be retained
-    required: true
-
-  package-name:
-    description: Name of the package to upload as an artifact
-    required: true
+  package-path:
+    description: Path to the package
+    value: ${{ steps.*.outputs.package-path }}
 
 runs:
   using: composite
   steps:
 
     - name: (linux) package cmake project
-      id: cmake-package
       if: runner.os == 'Linux'
       shell: bash
       run: |
@@ -58,17 +58,11 @@ runs:
         echo "package-path=${{ inputs.cmake-package-directory }}/*/ZIP/SilKit-*-*.zip" >> "$GITHUB_OUTPUT"
 
     - name: (windows) package cmake project
-      id: cmake-package
       if: runner.os == 'Windows'
       shell: powershell
       run: |
-        echo "FFFFFFFF!!"
+        cmake \
+          --build ${{ inputs.cmake-build-directory }} \
+          --target package
 
-    - name: upload package
-      if: ${{ inputs.upload-artifacts == 'true' }}
-      uses: actions/upload-artifact@v3
-      with:
-        name: ${{ inputs.package-name }}
-        path: ${{ steps.cmake-package.outputs.package-path }}
-        if-no-files-found: 'error'
-        retention-days: ${{ inputs.retention-days }}
+        echo "package-path=${{ inputs.cmake-package-directory }}/*/ZIP/SilKit-*-*.zip" >> "$env:GITHUB_OUTPUT"
