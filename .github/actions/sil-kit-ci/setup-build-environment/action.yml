@@ -1,65 +1,51 @@
 name: sil-kit-ci/setup-build-environment
 
+description: Setup the environment for the other CI actions.
+
 inputs:
+
   preset-name:
-    description: "The preset name from CMakePresets.json."
+    description: The preset name from CMakePresets.json
     required: true
-  upload-testlog:
-    description: "Upload gtest log with same name as preset-name"
-    required: false
-    default: true
-    type: boolean
-  cmake-args:
-    description: "Additional CMake arguments"
-    required: false
-  do-package-symbols:
-    description: "In Debug builds, split symbols and provide a zip package"
-    required: false
-    type: boolean
-  do-package:
-    description: "Run `cmake --target package` and upload artifact"
-    required: false
-    type: boolean
-  retention-days:
-    description: "How long we keep the artifacts"
-    required: false
-    type: number
-    default: 14
-  run-tests:
-    description: "Run tests"
-    required: false
-    default: true
-    type: boolean
-  toolset:
-    type: string
-    default: '14.1'
-    description: "MSVC tool set to use"
-    required: false
-  build-arch:
-    type: string
-    default: "x64"
-    description: "MSVC build architecture to use"
-    required: false
+
   linux-docker-image:
-    type: string
-    default: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
-    description: "Docker image used under Linux"
+    description: Docker image used under Linux
     required: false
- 
+    default: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
+
+  impl-cmake-source-directory:
+    description: build directory for use by the cmake actions
+    required: false
+    default: ${{ github.workspace }}/s/sil-kit
+
+  impl-cmake-build-directory:
+    description: build directory for use by the cmake actions
+    required: false
+    default: ${{ github.workspace }}/b/${{ inputs.preset-name }}
+
+  impl-cmake-package-directory:
+    description: package directory for use by the cmake actions
+    required: false
+    default: ${{ github.workspace }}/p/${{ inputs.preset-name }}
+
 outputs:
-  package-name:
-    description: artifact name of the distribution zip
-    value: "${{ steps.cmake-package.outputs.package-name }}"
-  package-path:
-    description: file path of the distribution zip
-    value: "${{ steps.cmake-package.outputs.package-path }}"
-  symbols-package-path:
-    description: file path of the symbols zip
-    value: "${{ steps.cmake-package.outputs.symbols-package-path }}"
-  symbols-package-name:
-    description: artifact name of the symbols zip
-    value: "${{ steps.cmake-package.outputs.symbols-package-name }}"
- 
+
+  linux-docker-image:
+    description: Docker image used under Linux
+    value: ${{ inputs.linux-docker-image }}
+
+  cmake-source-directory:
+    description: The source directory for use by the CMake actions
+    value: ${{ inputs.impl-cmake-source-directory }}
+
+  cmake-build-directory:
+    description: The build directory for use by the CMake actions
+    value: ${{ inputs.impl-cmake-build-directory }}
+
+  cmake-package-directory:
+    description: The build directory for use by the CMake actions
+    value: ${{ inputs.impl-cmake-package-directory }}
+
 runs:
   using: composite
   steps:
@@ -67,21 +53,74 @@ runs:
     - name: (all) checkout sil-kit sources
       uses: actions/checkout@v4
       with:
-        path: s/sil-kit
+        path: ${{ inputs.impl-cmake-source-directory }}
         submodules: true
 
     - name: (linux) cleanup build and package directories
       if: runner.os == 'Linux'
       shell: bash
-      run: rm -rf b/linux p/linux
+      run: rm -rf "${{ inputs.impl-cmake-build-directory }}" "${{ inputs.impl-cmake-package-directory }}"
 
     - name: (linux) create build and package directories
       if: runner.os == 'Linux'
       shell: bash
-      run: mkdir -p b/linux p/linux
+      run: mkdir -p "${{ inputs.impl-cmake-build-directory }}" "${{ inputs.impl-cmake-build-directory }}"
 
     - name: (linux) pull docker image for building via cmake
       if: runner.os == 'Linux'
       shell: bash
       run: docker pull "${{ inputs.linux-docker-image }}"
 
+
+#inputs:
+#
+#  upload-testlog:
+#    description: "Upload gtest log with same name as preset-name"
+#    required: false
+#    default: true
+#    type: boolean
+#  cmake-args:
+#    description: "Additional CMake arguments"
+#    required: false
+#  do-package-symbols:
+#    description: "In Debug builds, split symbols and provide a zip package"
+#    required: false
+#    type: boolean
+#  do-package:
+#    description: "Run `cmake --target package` and upload artifact"
+#    required: false
+#    type: boolean
+#  retention-days:
+#    description: "How long we keep the artifacts"
+#    required: false
+#    type: number
+#    default: 14
+#  run-tests:
+#    description: "Run tests"
+#    required: false
+#    default: true
+#    type: boolean
+#  toolset:
+#    type: string
+#    default: '14.1'
+#    description: "MSVC tool set to use"
+#    required: false
+#  build-arch:
+#    type: string
+#    default: "x64"
+#    description: "MSVC build architecture to use"
+#    required: false
+
+# outputs:
+#   package-name:
+#     description: artifact name of the distribution zip
+#     value: "${{ steps.cmake-package.outputs.package-name }}"
+#   package-path:
+#     description: file path of the distribution zip
+#     value: "${{ steps.cmake-package.outputs.package-path }}"
+#   symbols-package-path:
+#     description: file path of the symbols zip
+#     value: "${{ steps.cmake-package.outputs.symbols-package-path }}"
+#   symbols-package-name:
+#     description: artifact name of the symbols zip
+#     value: "${{ steps.cmake-package.outputs.symbols-package-name }}"

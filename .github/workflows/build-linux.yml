@@ -38,40 +38,46 @@ jobs:
         id: setup-build-environment
         with:
           preset-name: linux-release
-          do-package: ${{ inputs.do_package }}
-          retention-days: ${{ env.retention_days }}
 
       - name: cmake configure
         uses: ./.github/actions/sil-kit-ci/cmake-configure
         id: cmake-configure
         with:
           preset-name: linux-release
-          do-package: ${{ inputs.do_package }}
-          retention-days: ${{ env.retention_days }}
+          linux-docker-image: ${{ steps.setup-build-environment.outputs.linux-docker-image }}
+          cmake-source-directory: ${{ steps.setup-build-environment.outputs.cmake-source-directory }}
+          cmake-build-directory: ${{ steps.setup-build-environment.outputs.cmake-build-directory }}
+          cmake-package-directory: ${{ steps.setup-build-environment.outputs.cmake-package-directory }}
 
       - name: cmake build
         uses: ./.github/actions/sil-kit-ci/cmake-build
         id: cmake-build
         with:
           preset-name: linux-release
-          do-package: ${{ inputs.do_package }}
-          retention-days: ${{ env.retention_days }}
+          linux-docker-image: ${{ steps.setup-build-environment.outputs.linux-docker-image }}
+          cmake-source-directory: ${{ steps.setup-build-environment.outputs.cmake-source-directory }}
+          cmake-build-directory: ${{ steps.setup-build-environment.outputs.cmake-build-directory }}
+          cmake-package-directory: ${{ steps.setup-build-environment.outputs.cmake-package-directory }}
 
       - name: cmake test
         uses: ./.github/actions/sil-kit-ci/cmake-test
         id: cmake-test
         with:
           preset-name: linux-release
-          do-package: ${{ inputs.do_package }}
-          retention-days: ${{ env.retention_days }}
+          linux-docker-image: ${{ steps.setup-build-environment.outputs.linux-docker-image }}
+          cmake-source-directory: ${{ steps.setup-build-environment.outputs.cmake-source-directory }}
+          cmake-build-directory: ${{ steps.setup-build-environment.outputs.cmake-build-directory }}
+          cmake-package-directory: ${{ steps.setup-build-environment.outputs.cmake-package-directory }}
 
       - name: cmake package
         uses: ./.github/actions/sil-kit-ci/cmake-package
         id: cmake-package
         with:
           preset-name: linux-release
-          do-package: ${{ inputs.do_package }}
-          retention-days: ${{ env.retention_days }}
+          linux-docker-image: ${{ steps.setup-build-environment.outputs.linux-docker-image }}
+          cmake-source-directory: ${{ steps.setup-build-environment.outputs.cmake-source-directory }}
+          cmake-build-directory: ${{ steps.setup-build-environment.outputs.cmake-build-directory }}
+          cmake-package-directory: ${{ steps.setup-build-environment.outputs.cmake-package-directory }}
 
 #      - name: pull docker container
 #        run: docker pull ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
