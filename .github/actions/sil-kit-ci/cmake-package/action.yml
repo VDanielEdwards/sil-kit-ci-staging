@@ -1,4 +1,4 @@
-name: sil-kil-ci/cmake-configure
+name: sil-kil-ci/cmake-build
 
 inputs:
   preset-name:
@@ -64,7 +64,7 @@ runs:
   using: composite
   steps:
 
-    - name: (linux) configure cmake preset
+    - name: (linux) build cmake preset
       if: runner.os == 'Linux'
       shell: bash
       run: |
@@ -74,13 +74,6 @@ runs:
           -v "${{ github.workspace }}/p/linux:/p" \
           "${{ inputs.linux-docker-image }}" \
             cmake \
-              -S /s/sil-kit \
-              -B /b \
-              -G Ninja \
-              -D CMAKE_BUILD_TYPE=Release \
-              -D CPACK_PACKAGE_DIRECTORY=/p \
-              -D SILKIT_BUILD_DEMOS=OFF \
-              -D SILKIT_BUILD_UTILITIES=OFF \
-              -D SILKIT_BUILD_DASHBOARD=OFF \
-              -D SILKIT_BUILD_DOCS=OFF
+              --build /b \
+              --target package
 

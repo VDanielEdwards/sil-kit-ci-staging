@@ -70,10 +70,15 @@ runs:
         path: s/sil-kit
         submodules: true
 
-    - name: (linux) create build directory
+    - name: (linux) cleanup build and package directories
       if: runner.os == 'Linux'
       shell: bash
-      run: mkdir -p b/linux
+      run: rm -rf b/linux p/linux
+
+    - name: (linux) create build and package directories
+      if: runner.os == 'Linux'
+      shell: bash
+      run: mkdir -p b/linux p/linux
 
     - name: (linux) pull docker image for building via cmake
       if: runner.os == 'Linux'

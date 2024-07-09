@@ -4,6 +4,7 @@ inputs:
   preset-name:
     description: "The preset name from CMakePresets.json."
     required: true
+
   upload-testlog:
     description: "Upload gtest log with same name as preset-name"
     required: false
@@ -40,6 +41,7 @@ inputs:
     default: "x64"
     description: "MSVC build architecture to use"
     required: false
+
   linux-docker-image:
     type: string
     default: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
@@ -64,13 +66,14 @@ runs:
   using: composite
   steps:
 
-    - name: (linux) configure cmake preset
+    - name: (linux) build cmake preset
       if: runner.os == 'Linux'
       shell: bash
       run: |
         docker run \
           -v "${{ github.workspace }}/s:/s" \
-          -v "${{ github.workspace }}/b/linux:/b" \
+          -v "${{ github.workspace }}/b/${{ inputs.preset-name }}:/b" \
+          -v "${{ github.workspace }}/p/${{ inputs.preset-name }}:/p" \
           "${{ inputs.linux-docker-image }}" \
             cmake \
               --build /b \
