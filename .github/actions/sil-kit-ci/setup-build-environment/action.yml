@@ -1,4 +1,4 @@
-name: (sil-kit ci) setup build environment
+name: sil-kit-ci/setup-build-environment
 
 inputs:
   preset-name:

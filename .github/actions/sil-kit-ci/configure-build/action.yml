@@ -1,4 +1,4 @@
-name: (sil-kil ci) configure build
+name: sil-kil-ci/configure-build
 
 inputs:
   preset-name:
@@ -67,9 +67,9 @@ runs:
     - name: (linux) configure cmake preset
       run: |
         docker run \
-          -v "${{ github.workspace }}/s/sil-kit:/s" \
+          -v "${{ github.workspace }}/s:/s" \
           -v "${{ github.workspace }}/b/linux:/b" \
           "${{ inputs.linux-docker-image }}" \
-          gcc --version
+          cmake -S /s/sil-kit -B /b -G Ninja -D CMAKE_BUILD_TYPE=Release
       if: runner.os == 'Linux'
       shell: bash
