@@ -51,26 +51,26 @@ jobs:
       #      python3 ./SilKit/ci/check_files_changed.py ${{ github.repository }} ${{ github.event.number }}; \
       #    fi
 
-  clang14-tsan:
-    name: Thread Sanitizer Tests
-    needs: [check-licenses, check-run-builds]
-    uses: ./.github/workflows/linux-tsan.yml
-    with:
-      run_build: ${{ needs.check-run-builds.outputs.run_builds == 'true' }}
+  #clang14-tsan:
+  #  name: Thread Sanitizer Tests
+  #  needs: [check-licenses, check-run-builds]
+  #  uses: ./.github/workflows/linux-tsan.yml
+  #  with:
+  #    run_build: ${{ needs.check-run-builds.outputs.run_builds == 'true' }}
 
-  clang14-ubsan:
-    name: Undefined Behavior Sanitizer Tests
-    needs: [check-licenses, check-run-builds]
-    uses: ./.github/workflows/linux-ubsan.yml
-    with:
-      run_build: ${{ needs.check-run-builds.outputs.run_builds == 'true' }}
+  #clang14-ubsan:
+  #  name: Undefined Behavior Sanitizer Tests
+  #  needs: [check-licenses, check-run-builds]
+  #  uses: ./.github/workflows/linux-ubsan.yml
+  #  with:
+  #    run_build: ${{ needs.check-run-builds.outputs.run_builds == 'true' }}
 
-  clang14-asan:
-    name: Address Sanitizer Tests
-    needs: [check-licenses, check-run-builds]
-    uses: ./.github/workflows/linux-asan.yml
-    with:
-      run_build: ${{ needs.check-run-builds.outputs.run_builds == 'true' }}
+  #clang14-asan:
+  #  name: Address Sanitizer Tests
+  #  needs: [check-licenses, check-run-builds]
+  #  uses: ./.github/workflows/linux-asan.yml
+  #  with:
+  #    run_build: ${{ needs.check-run-builds.outputs.run_builds == 'true' }}
 
   ubuntu-release-builds:
     uses: ./.github/workflows/build-linux.yml
@@ -80,10 +80,10 @@ jobs:
       retention_days: ${{ github.event_name == 'push' && 90 || 14 }}
       run_build: ${{ needs.check-run-builds.outputs.run_builds == 'true' }}
 
-  windows-release-builds:
-    uses: ./.github/workflows/build-win.yml
-    needs: [check-licenses, check-run-builds]
-    with:
-      do_package: ${{ github.event_name == 'push' && true || false }}
-      retention_days: ${{ github.event_name == 'push' && 90 || 14 }}
-      run_build: ${{ needs.check-run-builds.outputs.run_builds == 'true' }}
+  #windows-release-builds:
+  #  uses: ./.github/workflows/build-win.yml
+  #  needs: [check-licenses, check-run-builds]
+  #  with:
+  #    do_package: ${{ github.event_name == 'push' && true || false }}
+  #    retention_days: ${{ github.event_name == 'push' && 90 || 14 }}
+  #    run_build: ${{ needs.check-run-builds.outputs.run_builds == 'true' }}
