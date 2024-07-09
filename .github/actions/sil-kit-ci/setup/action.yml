@@ -13,21 +13,6 @@ inputs:
     required: false
     default: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
 
-  impl-cmake-source-directory:
-    description: build directory for use by the cmake actions
-    required: false
-    default: ${{ github.workspace }}/s/sil-kit
-
-  impl-cmake-build-directory:
-    description: build directory for use by the cmake actions
-    required: false
-    default: ${{ github.workspace }}/b/${{ inputs.preset-name }}
-
-  impl-cmake-package-directory:
-    description: package directory for use by the cmake actions
-    required: false
-    default: ${{ github.workspace }}/p/${{ inputs.preset-name }}
-
 outputs:
 
   linux-docker-image:
@@ -36,35 +21,50 @@ outputs:
 
   cmake-source-directory:
     description: The source directory for use by the CMake actions
-    value: ${{ inputs.impl-cmake-source-directory }}
+    value: ${{ steps.vars.outputs.cmake-source-directory }}
 
   cmake-build-directory:
     description: The build directory for use by the CMake actions
-    value: ${{ inputs.impl-cmake-build-directory }}
+    value: ${{ steps.vars.outputs.cmake-build-directory }}
 
   cmake-package-directory:
     description: The build directory for use by the CMake actions
-    value: ${{ inputs.impl-cmake-package-directory }}
+    value: ${{ steps.vars.outputs.cmake-package-directory }}
 
 runs:
   using: composite
   steps:
 
+    - name: (all) compute variables
+      id: vars
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        echo 'cmake-source-directory=${{ github.workspace}}/s/sil-kit' >> "$GITHUB_OUTPUT"
+        echo 'cmake-build-directory=${{ github.workspace}}/b/${{ inputs.preset-name }}' >> "$GITHUB_OUTPUT"
+        echo 'cmake-package-directory=${{ github.workspace}}/p/${{ inputs.preset-name }}' >> "$GITHUB_OUTPUT"
+
     - name: (all) checkout sil-kit sources
       uses: actions/checkout@v4
       with:
-        path: ${{ inputs.impl-cmake-source-directory }}
+        path: ${{ steps.vars.outputs.cmake-source-directory }}
         submodules: true
 
     - name: (linux) cleanup build and package directories
       if: runner.os == 'Linux'
       shell: bash
-      run: rm -rf "${{ inputs.impl-cmake-build-directory }}" "${{ inputs.impl-cmake-package-directory }}"
+      run: |
+        rm -rf \
+          "${{ steps.vars.outputs.cmake-build-directory }}" \
+          "${{ steps.vars.outputs.cmake-package-directory }}"
 
     - name: (linux) create build and package directories
       if: runner.os == 'Linux'
       shell: bash
-      run: mkdir -p "${{ inputs.impl-cmake-build-directory }}" "${{ inputs.impl-cmake-build-directory }}"
+      run: |
+        mkdir -p \
+          "${{ steps.vars.outputs.cmake-build-directory }}" \
+          "${{ steps.vars.outputs.cmake-package-directory }}"
 
     - name: (linux) pull docker image for building via cmake
       if: runner.os == 'Linux'
