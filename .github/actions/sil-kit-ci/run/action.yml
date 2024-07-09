@@ -1,0 +1,72 @@
+name: sil-kit-ci/run
+
+description: Run the SIL Kit CI builds.
+
+inputs:
+
+  preset-name:
+    description: The preset name from CMakePresets.json
+    required: true
+
+  linux-docker-image:
+    description: Docker image used under Linux
+    required: false
+    default: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
+
+runs:
+  using: composite
+  steps:
+
+    - name: (all) compute directories
+      id: dirs
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        echo 'cmake-source=${{ github.workspace}}/s/sil-kit' >> "$GITHUB_OUTPUT"
+        echo 'cmake-build=${{ github.workspace}}/b/sil-kit/${{ inputs.preset-name }}' >> "$GITHUB_OUTPUT"
+        echo 'cmake-package=${{ github.workspace}}/p/sil-kit/${{ inputs.preset-name }}' >> "$GITHUB_OUTPUT"
+
+    - name: setup
+      uses: ./.github/actions/sil-kit-ci/setup
+      id: setup
+      with:
+        linux-docker-image: ${{ inputs.linux-docker-image }}
+        cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
+        cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
+        cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
+
+    - name: cmake configure
+      uses: ./.github/actions/sil-kit-ci/cmake-configure
+      id: cmake-configure
+      with:
+        linux-docker-image: ${{ inputs.linux-docker-image }}
+        cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
+        cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
+        cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
+
+    - name: cmake build
+      uses: ./.github/actions/sil-kit-ci/cmake-build
+      id: cmake-build
+      with:
+        linux-docker-image: ${{ inputs.linux-docker-image }}
+        cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
+        cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
+        cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
+
+    - name: cmake test
+      uses: ./.github/actions/sil-kit-ci/cmake-test
+      id: cmake-test
+      with:
+        linux-docker-image: ${{ inputs.linux-docker-image }}
+        cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
+        cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
+        cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
+
+    - name: cmake package
+      uses: ./.github/actions/sil-kit-ci/cmake-package
+      id: cmake-package
+      with:
+        linux-docker-image: ${{ inputs.linux-docker-image }}
+        cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
+        cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
+        cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}

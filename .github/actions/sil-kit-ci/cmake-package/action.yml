@@ -29,7 +29,7 @@ runs:
   using: composite
   steps:
 
-    - name: (linux) build cmake preset
+    - name: (linux) package cmake project
       if: runner.os == 'Linux'
       shell: bash
       run: |

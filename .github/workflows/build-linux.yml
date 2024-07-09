@@ -19,11 +19,13 @@ on:
         type: boolean
 
 jobs:
+
   ci-testing:
     name: Linux Build
     environment: public-github-runners
     runs-on: ubuntu-22.04
     if: inputs.run_build == true
+
     steps:
 
       - name: checkout sil-kit workflows and actions
@@ -33,54 +35,11 @@ jobs:
           sparse-checkout: |
             .github
 
-      - name: setup build environment
-        uses: ./.github/actions/sil-kit-ci/setup
+      - name: run ci build
+        uses: ./.github/actions/sil-kit-ci/run
         id: setup
         with:
           preset-name: linux-release
-
-      - name: cmake configure
-        uses: ./.github/actions/sil-kit-ci/cmake-configure
-        id: cmake-configure
-        with:
-          preset-name: linux-release
-          linux-docker-image: ${{ steps.setup.outputs.linux-docker-image }}
-          cmake-source-directory: ${{ steps.setup.outputs.cmake-source-directory }}
-          cmake-build-directory: ${{ steps.setup.outputs.cmake-build-directory }}
-          cmake-package-directory: ${{ steps.setup.outputs.cmake-package-directory }}
-
-      - name: cmake build
-        uses: ./.github/actions/sil-kit-ci/cmake-build
-        id: cmake-build
-        with:
-          preset-name: linux-release
-          linux-docker-image: ${{ steps.setup.outputs.linux-docker-image }}
-          cmake-source-directory: ${{ steps.setup.outputs.cmake-source-directory }}
-          cmake-build-directory: ${{ steps.setup.outputs.cmake-build-directory }}
-          cmake-package-directory: ${{ steps.setup.outputs.cmake-package-directory }}
-
-      - name: cmake test
-        uses: ./.github/actions/sil-kit-ci/cmake-test
-        id: cmake-test
-        with:
-          preset-name: linux-release
-          linux-docker-image: ${{ steps.setup.outputs.linux-docker-image }}
-          cmake-source-directory: ${{ steps.setup.outputs.cmake-source-directory }}
-          cmake-build-directory: ${{ steps.setup.outputs.cmake-build-directory }}
-          cmake-package-directory: ${{ steps.setup.outputs.cmake-package-directory }}
-
-      - name: cmake package
-        uses: ./.github/actions/sil-kit-ci/cmake-package
-        id: cmake-package
-        with:
-          preset-name: linux-release
-          linux-docker-image: ${{ steps.setup.outputs.linux-docker-image }}
-          cmake-source-directory: ${{ steps.setup.outputs.cmake-source-directory }}
-          cmake-build-directory: ${{ steps.setup.outputs.cmake-build-directory }}
-          cmake-package-directory: ${{ steps.setup.outputs.cmake-package-directory }}
-
-#      - name: pull docker container
-#        run: docker pull ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
 
 #  clang14-release:
 #    name: Clang 14 release Builds for Ubuntu 22.04
