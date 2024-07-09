@@ -40,12 +40,16 @@ jobs:
           submodules: false
       - name: Check if build CI should run
         id: build_check
-        run: |
-          if [[ ${{ github.event_name }} == 'push' ]];then \
-            echo "run_builds=true" >> $GITHUB_OUTPUT; \
-          else \
-            python3 ./SilKit/ci/check_files_changed.py ${{ github.repository }} ${{ github.event.number }}; \
-          fi
+        run: true
+
+      #- name: Check if build CI should run
+      #  id: build_check
+      #  run: |
+      #    if [[ ${{ github.event_name }} == 'push' ]];then \
+      #      echo "run_builds=true" >> $GITHUB_OUTPUT; \
+      #    else \
+      #      python3 ./SilKit/ci/check_files_changed.py ${{ github.repository }} ${{ github.event.number }}; \
+      #    fi
 
   clang14-tsan:
     name: Thread Sanitizer Tests
