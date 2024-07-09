@@ -78,13 +78,13 @@ jobs:
   #  with:
   #    run_build: ${{ needs.check-run-builds.outputs.run_builds == 'true' }}
 
-  ubuntu-release-builds:
-    uses: ./.github/workflows/build-linux.yml
-    needs: [check-licenses, check-run-builds]
+  ci-build-packages:
+    name: 'CI: Build Packages'
+    uses: ./.github/workflows/ci-build-packages.yml
+    needs: [ check-licenses, check-run-builds ]
     with:
-      do_package: ${{ github.event_name == 'push' && true || false }}
-      retention_days: ${{ github.event_name == 'push' && 90 || 14 }}
-      run_build: ${{ needs.check-run-builds.outputs.run_builds == 'true' }}
+      retention-days: ${{ github.event_name == 'push' && 2 || 1 }}
+      run: ${{ needs.check-run-builds.outputs.run_builds == 'true' }}
 
   #windows-release-builds:
   #  uses: ./.github/workflows/build-win.yml
