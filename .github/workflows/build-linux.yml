@@ -19,38 +19,48 @@ on:
         type: boolean
 
 jobs:
-  clang14-release:
-    name: Clang 14 release Builds for Ubuntu 22.04
+  ci-testing:
+    name: CI Testing
     environment: public-github-runners
     runs-on: ubuntu-22.04
     if: inputs.run_build == true
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - uses: ./.github/actions/build-cmake-preset
-        with:
-          preset-name: clang14-release
-          do-package: ${{ inputs.do_package }}
-          retention-days: ${{ inputs.retention_days }}
+      - name: run docker container
+        run: |
+          echo "Hello World!"
 
-  gcc-release:
-    name: GCC release Builds for Ubuntu 22.04
-    environment: public-github-runners
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
-    if: inputs.run_build == true
-    steps:
-      - name: git checkout
-        uses: actions/checkout@v1
-        with:
-          submodules: true
-      - name: GCC release build
-        uses: ./.github/actions/build-cmake-preset
-        id: build
-        with:
-          preset-name: linux-release
-          do-package: ${{ inputs.do_package }}
-          retention-days: ${{ env.retention_days }}
+#  clang14-release:
+#    name: Clang 14 release Builds for Ubuntu 22.04
+#    environment: public-github-runners
+#    runs-on: ubuntu-22.04
+#    if: inputs.run_build == true
+#    steps:
+#      - uses: actions/checkout@v4
+#        with:
+#          submodules: true
+#      - uses: ./.github/actions/build-cmake-preset
+#        with:
+#          preset-name: clang14-release
+#          do-package: ${{ inputs.do_package }}
+#          retention-days: ${{ inputs.retention_days }}
+#
+#  gcc-release:
+#    name: GCC release Builds for Ubuntu 22.04
+#    environment: public-github-runners
+#    runs-on: ubuntu-latest
+#    container:
+#      image: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
+#    if: inputs.run_build == true
+#    steps:
+#      - name: git checkout
+#        uses: actions/checkout@v1
+#        with:
+#          submodules: true
+#      - name: GCC release build
+#        uses: ./.github/actions/build-cmake-preset
+#        id: build
+#        with:
+#          preset-name: linux-release
+#          do-package: ${{ inputs.do_package }}
+#          retention-days: ${{ env.retention_days }}
 
