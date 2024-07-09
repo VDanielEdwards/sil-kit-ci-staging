@@ -2,10 +2,10 @@ name: "CI for Pull Requests"
 
 on:
   pull_request:
-    branches: [ 'main' ]
+    branches: [ 'main', 'ci/staging' ]
 
   push:
-    branches: [ 'main' ]
+    branches: [ 'main', 'ci/staging' ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
