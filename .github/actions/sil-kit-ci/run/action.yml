@@ -110,4 +110,4 @@ runs:
         upload-artifacts: ${{ inputs.upload-artifacts }}
         retention-days: ${{ inputs.retention-days }}
         package-name: ${{ inputs.package-name }}
-        package-path: ${{ steps.cmake-package.outputs.package-name }}
+        package-path: ${{ steps.cmake-package.outputs.package-path }}
