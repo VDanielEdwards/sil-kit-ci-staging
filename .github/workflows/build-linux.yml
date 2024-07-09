@@ -20,18 +20,30 @@ on:
 
 jobs:
   ci-testing:
-    name: CI Testing
+    name: Linux Build
     environment: public-github-runners
     runs-on: ubuntu-22.04
     if: inputs.run_build == true
     steps:
-      - name: git checkout
-        uses: actions/checkout@v1
+
+      - name: checkout sil-kit workflows and actions
+        uses: actions/checkout@v4
         with:
-          submodules: true
-      - name: GCC release build
-        uses: ./.github/actions/build-cmake-preset
-        id: build
+          submodules: false
+          sparse-checkout: |
+            .github
+
+      - name: setup build environment
+        uses: ./.github/actions/sil-kit-ci/setup-build-environment
+        id: setup-build-environment
+        with:
+          preset-name: linux-release
+          do-package: ${{ inputs.do_package }}
+          retention-days: ${{ env.retention_days }}
+
+      - name: configure build
+        uses: ./.github/actions/sil-kit-ci/configure-build
+        id: configure-build
         with:
           preset-name: linux-release
           do-package: ${{ inputs.do_package }}
