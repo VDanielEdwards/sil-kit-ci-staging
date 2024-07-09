@@ -41,9 +41,17 @@ jobs:
           do-package: ${{ inputs.do_package }}
           retention-days: ${{ env.retention_days }}
 
+      - name: cmake configure
+        uses: ./.github/actions/sil-kit-ci/cmake-configure
+        id: cmake-configure
+        with:
+          preset-name: linux-release
+          do-package: ${{ inputs.do_package }}
+          retention-days: ${{ env.retention_days }}
+
       - name: configure build
-        uses: ./.github/actions/sil-kit-ci/configure-build
-        id: configure-build
+        uses: ./.github/actions/sil-kit-ci/cmake-build
+        id: cmake-build
         with:
           preset-name: linux-release
           do-package: ${{ inputs.do_package }}

@@ -1,4 +1,4 @@
-name: sil-kit-ci/setup-build-environment
+name: sil-kil-ci/cmake-build
 
 inputs:
   preset-name:
@@ -64,19 +64,15 @@ runs:
   using: composite
   steps:
 
-    - name: (all) checkout sil-kit sources
-      uses: actions/checkout@v4
-      with:
-        path: s/sil-kit
-        submodules: true
-
-    - name: (linux) create build directory
+    - name: (linux) configure cmake preset
       if: runner.os == 'Linux'
       shell: bash
-      run: mkdir -p b/linux
-
-    - name: (linux) pull docker image for building via cmake
-      if: runner.os == 'Linux'
-      shell: bash
-      run: docker pull "${{ inputs.linux-docker-image }}"
+      run: |
+        docker run \
+          -v "${{ github.workspace }}/s:/s" \
+          -v "${{ github.workspace }}/b/linux:/b" \
+          "${{ inputs.linux-docker-image }}" \
+            cmake \
+              --build /b \
+              --parallel
 
