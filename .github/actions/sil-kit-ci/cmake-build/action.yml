@@ -37,15 +37,24 @@ runs:
           -v "${{ inputs.cmake-source-directory }}:/s" \
           -v "${{ inputs.cmake-build-directory }}:/b" \
           -v "${{ inputs.cmake-package-directory }}:/p" \
+          -e "SIL_KIT_CI_CMAKE_BINARY_DIR=/b" \
+          -e "SIL_KIT_CI_CMAKE_INSTALL_DIR=/b/i" \
+          -w "/s" \
           "${{ inputs.linux-docker-image }}" \
             cmake \
-              --build /b \
+              --build \
+              --preset "${{ inputs.preset-name }}" \
               --parallel
 
     - name: (windows) build cmake project
       if: runner.os == 'Windows'
       shell: powershell
+      env:
+        SIL_KIT_CI_CMAKE_BINARY_DIR: "${{ inputs.cmake-build-directory }}"
+        SIL_KIT_CI_CMAKE_INSTALL_DIR: "${{ inputs.cmake-build-directory }}/i"
+      working-directory: ${{ inputs.cmake-source-directory }}
       run: |
         cmake `
-          --build "${{ inputs.cmake-build-directory }}" `
+          --build `
+          --preset "${{ inputs.preset-name }}" `
           --parallel

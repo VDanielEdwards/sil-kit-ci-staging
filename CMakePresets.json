@@ -1,6 +1,50 @@
 ﻿{
     "version": 3,
     "configurePresets": [
+
+        {
+            "name": "ci-linux",
+            "inherits": [ "mixin-ninja", "mixin-release", "mixin-werror", "mixin-ci-dirs", "mixin-ci-only-linux" ]
+        },
+
+        {
+            "name": "ci-windows",
+            "inherits": [ "mixin-ninja", "mixin-release", "mixin-werror", "mixin-ci-dirs", "mixin-ci-only-windows" ]
+        },
+
+
+
+
+        {
+            "name": "mixin-ci-dirs",
+            "hidden": true,
+            "binaryDir": "$env{SIL_KIT_CI_CMAKE_BINARY_DIR}",
+            "installDir": "$env{SIL_KIT_CI_CMAKE_INSTALL_DIR}"
+        },
+
+        {
+            "name": "mixin-ci-only-linux",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+
+        {
+            "name": "mixin-ci-only-windows",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+
+
+
+
         {
             "name": "base-env",
             "description": "Basic preset that defines global variables",
@@ -145,14 +189,13 @@
             }
         },
 
-
-
         {
             "name": "mixin-ninja",
             "description": "Use Ninja Generator",
             "hidden": true,
             "generator": "Ninja"
         },
+
         {
             "name": "mixin-dirs",
             "description": "Set default binary / install dirs",
@@ -610,6 +653,21 @@
         }
     ],
     "buildPresets": [
+
+        {
+            "name": "ci-linux",
+            "configurePreset": "ci-linux"
+        },
+
+        {
+            "name": "ci-windows",
+            "configurePreset": "ci-windows"
+        },
+
+
+
+
+
         {
             "name": "linux-base",
             "hidden": true,
@@ -825,6 +883,21 @@
     ],
 
     "testPresets": [
+
+        {
+            "name": "ci-linux",
+            "configurePreset": "ci-linux"
+        },
+
+        {
+            "name": "ci-windows",
+            "configurePreset": "ci-windows"
+        },
+
+
+
+
+
         {
             "name": "linux-base",
             "hidden": true,

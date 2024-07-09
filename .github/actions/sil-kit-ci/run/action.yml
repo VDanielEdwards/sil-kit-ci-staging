@@ -63,6 +63,7 @@ runs:
       uses: ./.github/actions/sil-kit-ci/cmake-configure
       id: cmake-configure
       with:
+        preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
         msvc-arch: ${{ inputs.msvc-arch }}
         msvc-toolset: ${{ inputs.msvc-toolset }}
@@ -74,6 +75,7 @@ runs:
       uses: ./.github/actions/sil-kit-ci/cmake-build
       id: cmake-build
       with:
+        preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
         msvc-arch: ${{ inputs.msvc-arch }}
         msvc-toolset: ${{ inputs.msvc-toolset }}
@@ -85,6 +87,7 @@ runs:
       uses: ./.github/actions/sil-kit-ci/cmake-test
       id: cmake-test
       with:
+        preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
         msvc-arch: ${{ inputs.msvc-arch }}
         msvc-toolset: ${{ inputs.msvc-toolset }}
@@ -96,6 +99,7 @@ runs:
       uses: ./.github/actions/sil-kit-ci/cmake-package
       id: cmake-package
       with:
+        preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
         msvc-arch: ${{ inputs.msvc-arch }}
         msvc-toolset: ${{ inputs.msvc-toolset }}
@@ -107,6 +111,7 @@ runs:
       uses: ./.github/actions/sil-kit-ci/upload-artifacts
       id: upload-artifacts
       with:
+        preset-name: ${{ inputs.preset-name }}
         upload-artifacts: ${{ inputs.upload-artifacts }}
         retention-days: ${{ inputs.retention-days }}
         package-name: ${{ inputs.package-name }}

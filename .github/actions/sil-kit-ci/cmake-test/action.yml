@@ -37,17 +37,22 @@ runs:
           -v "${{ inputs.cmake-source-directory }}:/s" \
           -v "${{ inputs.cmake-build-directory }}:/b" \
           -v "${{ inputs.cmake-package-directory }}:/p" \
+          -e "SIL_KIT_CI_CMAKE_BINARY_DIR=/b" \
+          -e "SIL_KIT_CI_CMAKE_INSTALL_DIR=/b/i" \
+          -w "/s" \
           "${{ inputs.linux-docker-image }}" \
             ctest \
-              --build /b \
-              -C Release \
+              --preset "${{ inputs.preset-name }}" \
               -R '^Test_'
 
     - name: (windows) execute ctest
       if: runner.os == 'Windows'
-      shell: bash
+      shell: powershell
+      working-directory: ${{ inputs.cmake-source-directory }}
+      env:
+        SIL_KIT_CI_CMAKE_BINARY_DIR: "${{ inputs.cmake-build-directory }}"
+        SIL_KIT_CI_CMAKE_INSTALL_DIR: "${{ inputs.cmake-build-directory }}/i"
       run: |
         ctest `
-          --build "${{ inputs.cmake-build-directory }}" `
-          -C Release `
+          --preset "${{ inputs.preset-name }}" `
           -R '^Test_'

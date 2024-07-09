@@ -37,29 +37,22 @@ runs:
           -v "${{ inputs.cmake-source-directory }}:/s" \
           -v "${{ inputs.cmake-build-directory }}:/b" \
           -v "${{ inputs.cmake-package-directory }}:/p" \
+          -e "SIL_KIT_CI_CMAKE_BINARY_DIR=/b" \
+          -e "SIL_KIT_CI_CMAKE_INSTALL_DIR=/b/i" \
+          -w "/s" \
           "${{ inputs.linux-docker-image }}" \
             cmake \
-              -S /s \
-              -B /b \
-              -G Ninja \
-              -D CMAKE_BUILD_TYPE=Release \
-              -D CPACK_PACKAGE_DIRECTORY=/p \
-              -D SILKIT_BUILD_DEMOS=OFF \
-              -D SILKIT_BUILD_UTILITIES=OFF \
-              -D SILKIT_BUILD_DASHBOARD=OFF \
-              -D SILKIT_BUILD_DOCS=OFF
+              --preset "${{ inputs.preset-name }}" \
+              -D CMAKE_PACKAGE_DIR=/p
 
-    - name: (windows x64) configure cmake project
+    - name: (windows) configure cmake project
       if: runner.os == 'Windows'
       shell: powershell
+      env:
+        SIL_KIT_CI_CMAKE_BINARY_DIR: "${{ inputs.cmake-build-directory }}"
+        SIL_KIT_CI_CMAKE_INSTALL_DIR: "${{ inputs.cmake-build-directory }}/i"
+      working-directory: ${{ inputs.cmake-source-directory }}
       run: |
         cmake `
-          -S "${{ inputs.cmake-source-directory }}" `
-          -B "${{ inputs.cmake-build-directory }}" `
-          -G Ninja `
-          -D CMAKE_BUILD_TYPE=Release `
-          -D "CPACK_PACKAGE_DIRECTORY=${{ inputs.cmake-package-directory }}" `
-          -D SILKIT_BUILD_DEMOS=OFF `
-          -D SILKIT_BUILD_UTILITIES=OFF `
-          -D SILKIT_BUILD_DASHBOARD=OFF `
-          -D SILKIT_BUILD_DOCS=OFF
+          --preset "${{ inputs.preset-name }}" `
+          -D "CMAKE_PACKAGE_DIR=${{ inputs.cmake-package-directory }}"

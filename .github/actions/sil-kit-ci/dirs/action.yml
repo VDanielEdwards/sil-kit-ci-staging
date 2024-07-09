@@ -31,15 +31,15 @@ runs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
-        echo 'cmake-source=${{ github.workspace}}/s/sil-kit' >> "$GITHUB_OUTPUT"
-        echo 'cmake-build=${{ github.workspace}}/b/sil-kit/${{ inputs.preset-name }}' >> "$GITHUB_OUTPUT"
-        echo 'cmake-package=${{ github.workspace}}/p/sil-kit/${{ inputs.preset-name }}' >> "$GITHUB_OUTPUT"
+        echo 'cmake-source=${{ github.workspace }}/s/sil-kit' >> "$GITHUB_OUTPUT"
+        echo 'cmake-build=${{ github.workspace }}/b/sil-kit/${{ inputs.preset-name }}' >> "$GITHUB_OUTPUT"
+        echo 'cmake-package=${{ github.workspace }}/p/sil-kit/${{ inputs.preset-name }}' >> "$GITHUB_OUTPUT"
 
     - name: (windows) compute directories
       id: windows-dirs
       if: runner.os == 'Windows'
       shell: powershell
       run: |
-        echo 'cmake-source=${{ github.workspace}}\s\sil-kit' >> "$env:GITHUB_OUTPUT"
-        echo 'cmake-build=${{ github.workspace}}\b\sil-kit\${{ inputs.preset-name }}' >> "$env:GITHUB_OUTPUT"
-        echo 'cmake-package=${{ github.workspace}}\p\sil-kit\${{ inputs.preset-name }}' >> "$env:GITHUB_OUTPUT"
+        echo 'cmake-source=${{ github.workspace }}\s\sil-kit' >> "$env:GITHUB_OUTPUT"
+        echo 'cmake-build=${{ github.workspace }}\b\sil-kit\${{ inputs.preset-name }}' >> "$env:GITHUB_OUTPUT"
+        echo 'cmake-package=${{ github.workspace }}\p\sil-kit\${{ inputs.preset-name }}' >> "$env:GITHUB_OUTPUT"

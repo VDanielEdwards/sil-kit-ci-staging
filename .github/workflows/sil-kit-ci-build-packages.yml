@@ -1,4 +1,4 @@
-name: 'CI: Build Packages'
+name: 'Build Packages'
 
 on:
   workflow_call:
@@ -14,7 +14,7 @@ on:
 jobs:
 
   run:
-    name: Build Linux
+    name: Linux
     environment: public-github-runners
     runs-on: ubuntu-22.04
     if: inputs.run == true
@@ -36,7 +36,7 @@ jobs:
           package-name: silkit-linux.zip
 
   build-windows-x86:
-    name: Build Windows (x86)
+    name: Windows (x86)
     environment: public-github-runners
     runs-on: windows-2019
     if: inputs.run == true
@@ -52,7 +52,7 @@ jobs:
       - name: run ci build
         uses: ./.github/actions/sil-kit-ci/run
         with:
-          preset-name: ci-windows-x86
+          preset-name: ci-windows
           msvc-arch: x86
           msvc-toolset: 14.1
           upload-artifacts: true
@@ -60,7 +60,7 @@ jobs:
           package-name: silkit-windows-x86.zip
 
   build-windows-x64:
-    name: Build Windows (x64)
+    name: Windows (x64)
     environment: public-github-runners
     runs-on: windows-2019
     if: inputs.run == true
@@ -76,7 +76,7 @@ jobs:
       - name: run ci build
         uses: ./.github/actions/sil-kit-ci/run
         with:
-          preset-name: ci-windows-x64
+          preset-name: ci-windows
           msvc-arch: x64
           msvc-toolset: 14.1
           upload-artifacts: true
