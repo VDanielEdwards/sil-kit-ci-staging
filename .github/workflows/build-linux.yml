@@ -25,8 +25,20 @@ jobs:
     runs-on: ubuntu-22.04
     if: inputs.run_build == true
     steps:
-      - name: pull docker container
-        run: docker pull ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
+      - name: git checkout
+        uses: actions/checkout@v1
+        with:
+          submodules: true
+      - name: GCC release build
+        uses: ./.github/actions/build-cmake-preset
+        id: build
+        with:
+          preset-name: linux-release
+          do-package: ${{ inputs.do_package }}
+          retention-days: ${{ env.retention_days }}
+
+#      - name: pull docker container
+#        run: docker pull ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
 
 #  clang14-release:
 #    name: Clang 14 release Builds for Ubuntu 22.04
