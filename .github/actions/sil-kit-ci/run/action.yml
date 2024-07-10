@@ -61,17 +61,12 @@ runs:
         msvc-arch: ${{ inputs.msvc-arch }}
         msvc-toolset: ${{ inputs.msvc-toolset }}
 
-    - name: (linux) select c compiler
-      id: linux-cmake-configure-args-c-compiler
-      if: runner.os == 'Linux'
-      shell: bash
-      run: echo 'cmake-configure-args=-DCMAKE_C_COMPILER=${{ inputs.linux-c-compiler }}' >> "$GITHUB_OUTPUT"
-
-    - name: (linux) select c++ compiler
-      id: linux-cmake-configure-args-cxx-compiler
-      if: runner.os == 'Linux'
-      shell: bash
-      run: echo 'cmake-configure-args=-DCMAKE_CXX_COMPILER=${{ inputs.linux-cxx-compiler }}' >> "$GITHUB_OUTPUT"
+    - name: compute cmake configure arguments
+      uses: ./.github/actions/sil-kit-ci/cmake-configure-args
+      id: cmake-configure-args
+      with:
+        linux-c-compiler: ${{ inputs.linux-c-compiler }}
+        linux-cxx-compiler: ${{ inputs.linux-cxx-compiler }}
 
     - name: configure cmake project
       uses: ./.github/actions/sil-kit-ci/execute
@@ -79,7 +74,7 @@ runs:
         preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
         command: cmake
-        args: --preset "${{ inputs.preset-name }}" ${{ join(steps.*.outputs.cmake-configure-args, ' ') }}
+        args: --preset "${{ inputs.preset-name }}" ${{ steps.cmake-configure-args.outputs.compilers }}
 
     - name: build cmake project
       uses: ./.github/actions/sil-kit-ci/execute

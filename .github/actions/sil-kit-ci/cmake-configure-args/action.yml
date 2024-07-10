@@ -1,0 +1,35 @@
+name: sil-kil-ci/cmake-configure-args
+
+description: Compute arguments passed to cmake to override or augment the presets.
+
+inputs:
+
+  linux-c-compiler:
+    description: C compiler used under Linux
+    required: true
+
+  linux-cxx-compiler:
+    description: C++ compiler used under Linux
+    required: true
+
+outputs:
+
+  compilers:
+    description: The package directory for use by the cmake actions
+    value: ${{ join(steps.*.outputs.compiler, ' ') }}
+
+runs:
+  using: composite
+  steps:
+
+    - name: (linux) select c compiler
+      id: linux-cmake-configure-args-c-compiler
+      if: runner.os == 'Linux'
+      shell: bash
+      run: echo 'compiler=-DCMAKE_C_COMPILER=${{ inputs.linux-c-compiler }}' >> "$GITHUB_OUTPUT"
+
+    - name: (linux) select c++ compiler
+      id: linux-cmake-configure-args-cxx-compiler
+      if: runner.os == 'Linux'
+      shell: bash
+      run: echo 'compiler=-DCMAKE_CXX_COMPILER=${{ inputs.linux-cxx-compiler }}' >> "$GITHUB_OUTPUT"
