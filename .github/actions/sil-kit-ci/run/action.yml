@@ -57,35 +57,35 @@ runs:
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
 
-    - name: cmake configure
-      uses: ./.github/actions/sil-kit-ci/cmake-configure
-      id: cmake-configure
+    - name: configure cmake project
+      uses: ./.github/actions/sil-kit-ci/execute
       with:
-        preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
         cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
+        command: cmake
+        args: --preset "${{ inputs.preset-name }}"
 
-    - name: cmake build
-      uses: ./.github/actions/sil-kit-ci/cmake-build
-      id: cmake-build
+    - name: build cmake project
+      uses: ./.github/actions/sil-kit-ci/execute
       with:
-        preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
         cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
+        command: cmake
+        args: --build --preset "${{ inputs.preset-name }}" --parallel
 
-    - name: cmake test
-      uses: ./.github/actions/sil-kit-ci/cmake-test
-      id: cmake-test
+    - name: build cmake project
+      uses: ./.github/actions/sil-kit-ci/execute
       with:
-        preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
         cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
+        command: ctest
+        args: --preset "${{ inputs.preset-name }}" -R '^Test_'
 
     - name: cmake package
       uses: ./.github/actions/sil-kit-ci/cmake-package

@@ -35,7 +35,7 @@ runs:
   steps:
 
     - name: (all) build cmake project
-      uses: ./.github/actions/sil-kit-ci/execute-command
+      uses: ./.github/actions/sil-kit-ci/execute
       with:
         linux-docker-image: ${{ inputs.linux-docker-image }}
         cmake-source-directory: ${{ inputs.cmake-source-directory }}
