@@ -38,7 +38,7 @@ jobs:
   build-windows-x86:
     name: Windows (x86)
     environment: public-github-runners
-    runs-on: windows-2022
+    runs-on: windows-2019
     if: inputs.run == true
 
     steps:
@@ -62,7 +62,7 @@ jobs:
   build-windows-x64:
     name: Windows (x64)
     environment: public-github-runners
-    runs-on: windows-2022
+    runs-on: windows-2019
     if: inputs.run == true
 
     steps:
