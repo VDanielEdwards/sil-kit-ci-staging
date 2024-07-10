@@ -41,4 +41,4 @@ runs:
       if: runner.os == 'Linux' || runner.os == 'Windows'
       shell: bash
       run: |
-        echo 'package-path=${{ inputs.cmake-package-directory }}/SilKit-*-*.zip' >> "$GITHUB_OUTPUT"
+        echo 'package-path=${{ steps.dirs.outputs.cmake-package }}/SilKit-*-*.zip' >> "$GITHUB_OUTPUT"
