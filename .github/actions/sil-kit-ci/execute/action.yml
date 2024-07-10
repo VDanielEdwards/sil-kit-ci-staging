@@ -1,6 +1,9 @@
-name: sil-kil-ci/execute-cmake
+name: sil-kil-ci/execute
 
-description: Execute CMake.
+description: >
+  Execute a command with arguments.
+  On Linux runners, the command is executed in a docker container using the `linux-docker-image`.
+  On Windows runners, the command is executed on the runner itself.
 
 inputs:
 
