@@ -39,6 +39,7 @@ runs:
           -v "${{ inputs.cmake-package-directory }}:/p" \
           -e "SIL_KIT_CI_CMAKE_BINARY_DIR=/b" \
           -e "SIL_KIT_CI_CMAKE_INSTALL_DIR=/b/i" \
+          -e "SIL_KIT_CI_CMAKE_PACKAGE_DIR=/p" \
           -w "/s" \
           "${{ inputs.linux-docker-image }}" \
             cmake \
@@ -52,6 +53,7 @@ runs:
       env:
         SIL_KIT_CI_CMAKE_BINARY_DIR: "${{ inputs.cmake-build-directory }}"
         SIL_KIT_CI_CMAKE_INSTALL_DIR: "${{ inputs.cmake-build-directory }}/i"
+        SIL_KIT_CI_CMAKE_PACKAGE_DIR: "${{ inputs.cmake-package-directory }}"
       working-directory: ${{ inputs.cmake-source-directory }}
       run: |
         cmake `

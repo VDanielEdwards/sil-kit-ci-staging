@@ -19,7 +19,10 @@
             "name": "mixin-ci-dirs",
             "hidden": true,
             "binaryDir": "$env{SIL_KIT_CI_CMAKE_BINARY_DIR}",
-            "installDir": "$env{SIL_KIT_CI_CMAKE_INSTALL_DIR}"
+            "installDir": "$env{SIL_KIT_CI_CMAKE_INSTALL_DIR}",
+            "cacheVariables": {
+                "CPACK_PACKAGE_DIRECTORY": "$env{SIL_KIT_CI_CMAKE_PACKAGE_DIR}"
+            }
         },
 
         {
