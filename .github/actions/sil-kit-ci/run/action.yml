@@ -53,6 +53,8 @@ runs:
       id: setup
       with:
         linux-docker-image: ${{ inputs.linux-docker-image }}
+        msvc-arch: ${{ inputs.msvc-arch }}
+        msvc-toolset: ${{ inputs.msvc-toolset }}
         cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
@@ -77,7 +79,7 @@ runs:
         command: cmake
         args: --build --preset "${{ inputs.preset-name }}" --parallel
 
-    - name: build cmake project
+    - name: test cmake project
       uses: ./.github/actions/sil-kit-ci/execute
       with:
         linux-docker-image: ${{ inputs.linux-docker-image }}
@@ -87,7 +89,7 @@ runs:
         command: ctest
         args: --preset "${{ inputs.preset-name }}" -R '^Test_'
 
-    - name: cmake package
+    - name: package cmake project
       uses: ./.github/actions/sil-kit-ci/cmake-package
       id: cmake-package
       with:
