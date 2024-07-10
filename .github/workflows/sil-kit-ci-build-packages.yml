@@ -3,10 +3,17 @@ name: 'Build Packages'
 on:
   workflow_call:
     inputs:
+
+      upload-artifacts:
+        required: false
+        type: boolean
+        default: false
+
       retention-days:
         required: false
         type: number
-        default: 14
+        default: 1
+
       run:
         required: true
         type: boolean
@@ -15,70 +22,55 @@ jobs:
 
   run:
     name: Linux
-    environment: public-github-runners
-    runs-on: ubuntu-22.04
+    uses: ./.github/workflows/sil-kit-ci-manual-build-package.yml
     if: inputs.run == true
-
-    steps:
-
-      - name: checkout sil-kit workflows and actions
-        uses: actions/checkout@v4
-        with:
-          submodules: false
-          sparse-checkout: .github
-
-      - name: run ci build
-        uses: ./.github/actions/sil-kit-ci/run
-        with:
-          preset-name: ci-linux
-          upload-artifacts: true
-          retention-days: 1
-          package-name: silkit-linux
+    with:
+      runs-on: ubuntu-22.04
+      preset-name: ci-linux
+      upload-artifacts: ${{ inputs.upload-artifacts }}
+      retention-days: ${{ inputs.retention-days }}
+      package-name: SilKit-Linux
+      extra: |
+        {
+          "linux": {
+            "docker": { "image": "ghcr.io/mariusbgm/sil-kit-ci-ubuntu-18.04:main" },
+            "c": { "compiler": "gcc-8" },
+            "c++": { "compiler": "g++-8" }
+          }
+        }
 
   build-windows-x86:
     name: Windows (x86)
-    environment: public-github-runners
-    runs-on: windows-2019
+    uses: ./.github/workflows/sil-kit-ci-manual-build-package.yml
     if: inputs.run == true
-
-    steps:
-
-      - name: checkout sil-kit workflows and actions
-        uses: actions/checkout@v4
-        with:
-          submodules: false
-          sparse-checkout: .github
-
-      - name: run ci build
-        uses: ./.github/actions/sil-kit-ci/run
-        with:
-          preset-name: ci-windows
-          msvc-arch: x86
-          msvc-toolset: 14.1
-          upload-artifacts: true
-          retention-days: 1
-          package-name: silkit-windows-x86
+    with:
+      runs-on: windows-2019
+      preset-name: ci-windows
+      upload-artifacts: ${{ inputs.upload-artifacts }}
+      retention-days: ${{ inputs.retention-days }}
+      package-name: SilKit-Windows-x86
+      extra: |
+        {
+          "msvc": {
+            "arch": "x86",
+            "toolset": "14.1"
+          }
+        }
 
   build-windows-x64:
     name: Windows (x64)
-    environment: public-github-runners
-    runs-on: windows-2019
+    uses: ./.github/workflows/sil-kit-ci-manual-build-package.yml
     if: inputs.run == true
-
-    steps:
-
-      - name: checkout sil-kit workflows and actions
-        uses: actions/checkout@v4
-        with:
-          submodules: false
-          sparse-checkout: .github
-
-      - name: run ci build
-        uses: ./.github/actions/sil-kit-ci/run
-        with:
-          preset-name: ci-windows
-          msvc-arch: x64
-          msvc-toolset: 14.1
-          upload-artifacts: true
-          retention-days: 1
-          package-name: silkit-windows-x64
+    with:
+      runs-on: windows-2019
+      preset-name: ci-windows
+      upload-artifacts: ${{ inputs.upload-artifacts }}
+      retention-days: ${{ inputs.retention-days }}
+      package-name: SilKit-Windows-x86
+      extra: |
+        {
+          "msvc": {
+            "arch": "x86",
+            "toolset": "14.1"
+          }
+        }

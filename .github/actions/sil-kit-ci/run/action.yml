@@ -10,63 +10,51 @@ inputs:
 
   linux-docker-image:
     description: Docker image used under Linux
-    required: false
-    default: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-18.04:main
+    required: true
 
   linux-c-compiler:
     description: C compiler used under Linux
-    required: false
-    default: gcc-8
+    required: true
 
   linux-cxx-compiler:
     description: C++ compiler used under Linux
-    required: false
-    default: g++-8
+    required: true
 
   msvc-arch:
     description: Target architecture used under Windows/MSVC
-    required: false
-    default: 'x64'
+    required: true
 
   msvc-toolset:
     description: Target toolset used under Windows/MSVC
-    required: false
-    default: '14.1'
+    required: true
 
   upload-artifacts:
     description: Determines if artifacts created by the actions should be uploaded
-    required: false
-    default: 'false'
+    required: true
 
   retention-days:
     description: Determines the number of days any uploaded artifacts should be retained
-    required: false
-    default: '1'
+    required: true
 
   package-name:
     description: Name of the package to upload as an artifact
-    required: false
-    default: 'sil-kit.zip'
+    required: true
 
   cmake-configure-args:
     description: Extra arguments passed to cmake during configuration
-    required: false
-    default: ''
+    required: true
 
   cmake-build-args:
     description: Extra arguments passed to cmake during building
-    required: false
-    default: ''
+    required: true
 
   ctest-args:
     description: Extra arguments passed to ctest
-    required: false
-    default: ''
+    required: true
 
   cmake-package-args:
     description: Extra arguments passed to cmake during packaging
-    required: false
-    default: ''
+    required: true
 
 runs:
   using: composite
