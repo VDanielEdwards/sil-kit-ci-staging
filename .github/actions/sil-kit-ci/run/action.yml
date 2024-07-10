@@ -48,6 +48,26 @@ inputs:
     required: false
     default: 'sil-kit.zip'
 
+  cmake-configure-args:
+    description: Extra arguments passed to cmake during configuration
+    required: false
+    default: ''
+
+  cmake-build-args:
+    description: Extra arguments passed to cmake during building
+    required: false
+    default: ''
+
+  ctest-args:
+    description: Extra arguments passed to ctest
+    required: false
+    default: ''
+
+  cmake-package-args:
+    description: Extra arguments passed to cmake during packaging
+    required: false
+    default: ''
+
 runs:
   using: composite
   steps:
@@ -68,28 +88,28 @@ runs:
       with:
         preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        command: cmake --preset "${{ inputs.preset-name }}" ${{ steps.setup.outputs.cmake-configure-args }}
+        command: cmake --preset "${{ inputs.preset-name }}" ${{ steps.setup.outputs.cmake-configure-args }} ${{ inputs.cmake-configure-args }}
 
     - name: build cmake project
       uses: ./.github/actions/sil-kit-ci/execute
       with:
         preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        command: cmake --build --preset "${{ inputs.preset-name }}" --parallel
+        command: cmake --build --preset "${{ inputs.preset-name }}" --parallel ${{ inputs.cmake-build-args }}
 
     - name: test cmake project
       uses: ./.github/actions/sil-kit-ci/execute
       with:
         preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        command: ctest --preset "${{ inputs.preset-name }}" -R '^Test_'
+        command: ctest --preset "${{ inputs.preset-name }}" ${{ inputs.ctest-args }}
 
     - name: package cmake project
       uses: ./.github/actions/sil-kit-ci/cmake-package
       id: cmake-package
       with:
         preset-name: ${{ inputs.preset-name }}
-        linux-docker-image: ${{ inputs.linux-docker-image }}
+        linux-docker-image: ${{ inputs.linux-docker-image }} ${{ inputs.cmake-package-args }}
 
     - name: upload-artifacts
       uses: ./.github/actions/sil-kit-ci/upload-artifacts
