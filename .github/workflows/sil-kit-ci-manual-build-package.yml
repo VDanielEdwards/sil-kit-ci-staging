@@ -1,0 +1,90 @@
+name: 'Manual Build Package'
+
+on:
+  workflow_dispatch:
+    inputs:
+
+      runs-on:
+        description: Type of machine to run the job on
+        required: true
+        type: choice
+        options:
+          - ubuntu-22.04
+          - windows-2019
+
+      preset-name:
+        description: The CMake preset used for configuration and building
+        required: true
+        type: choice
+        options:
+          - ci-linux
+          - ci-windows
+
+      upload-artifacts:
+        description: If true, the created packages are uploaded as artifacts
+        required: true
+        type: boolean
+        default: false
+
+      retention-days:
+        description: The number of days to keep the uploaded artifacts
+        required: true
+        type: number
+        default: 1
+
+      package-name:
+        description: The name of the generated artifact
+        required: true
+        type: string
+        default: sil-kit
+
+      cmake-configure-args:
+        description: Extra arguments to cmake during configuration
+        required: false
+        type: string
+        default: ''
+
+      cmake-build-args:
+        description: Extra arguments to cmake during building
+        required: false
+        type: string
+        default: ''
+
+      ctest-args:
+        description: Extra arguments to ctest
+        required: false
+        type: string
+        default: ''
+
+      cmake-package-args:
+        description: Extra arguments to cmake during packaging
+        required: false
+        type: string
+        default: ''
+
+jobs:
+
+  manual-run:
+    name: Manual Build Package (${{ inputs.preset-name }} on ${{ inputs.runs-on }})
+    environment: public-github-runners
+    runs-on: ${{ inputs.runs-on }}
+
+    steps:
+
+      - name: checkout sil-kit workflows and actions
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          sparse-checkout: .github
+
+      - name: run ci build
+        uses: ./.github/actions/sil-kit-ci/run
+        with:
+          preset-name: ${{ inputs.preset-name }}
+          upload-artifacts: ${{ inputs.upload-artifacts }}
+          retention-days: ${{ inputs.retention-days }}
+          package-name: ${{ inputs.package-name }}
+          cmake-configure-args: ${{ inputs.cmake-configure-args }}
+          cmake-build-args: ${{ inputs.cmake-build-args }}
+          ctest-args: ${{ inputs.ctest-args }}
+          cmake-package-args: ${{ inputs.cmake-package-args }}
