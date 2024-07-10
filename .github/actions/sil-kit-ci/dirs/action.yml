@@ -40,6 +40,7 @@ runs:
       if: runner.os == 'Windows'
       shell: powershell
       run: |
-        echo 'cmake-source=${{ github.workspace }}\s\sil-kit' >> "$env:GITHUB_OUTPUT"
-        echo 'cmake-build=${{ github.workspace }}\b\sil-kit\${{ inputs.preset-name }}' >> "$env:GITHUB_OUTPUT"
-        echo 'cmake-package=${{ github.workspace }}\p\sil-kit\${{ inputs.preset-name }}' >> "$env:GITHUB_OUTPUT"
+        $workspace = "${{ github.workspace }}".Replace('\', '/')
+        echo "cmake-source=${workspace}/s/sil-kit" >> "$env:GITHUB_OUTPUT"
+        echo "cmake-build=${workspace}/b/sil-kit/${{ inputs.preset-name }}" >> "$env:GITHUB_OUTPUT"
+        echo "cmake-package=${workspace}/p/sil-kit/${{ inputs.preset-name }}" >> "$env:GITHUB_OUTPUT"
