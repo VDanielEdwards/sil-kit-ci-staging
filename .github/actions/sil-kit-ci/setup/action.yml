@@ -71,7 +71,7 @@ runs:
 
     - name: (windows) setup msvc environment
       if: runner.os == 'Windows'
-      uses: ilammy/msvc-dev-cmd@v1.12.0
+      uses: ilammy/msvc-dev-cmd@v1.13.0
       with:
         arch: ${{ inputs.msvc-arch }}
         toolset: ${{ inputs.msvc-toolset }}
