@@ -42,46 +42,21 @@ runs:
   using: composite
   steps:
 
-    - name: (linux) package cmake project
-      id: cmake-package-linux
-      if: runner.os == 'Linux'
+    - name: (all) build cmake project
+      uses: ./.github/actions/sil-kit-ci/execute-command
+      with:
+        linux-docker-image: ${{ inputs.linux-docker-image }}
+        msvc-arch: ${{ inputs.msvc-arch }}
+        msvc-toolset: ${{ inputs.msvc-toolset }}
+        cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
+        cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
+        cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
+        command: cmake
+        args: --build --preset "${{ inputs.preset-name }}" --target package
+
+    - name: (linux, windows) compute outputs
+      id: compute-outputs
+      if: runner.os == 'Linux' || runner.os == 'Windows'
       shell: bash
       run: |
-        docker run \
-          -v "${{ inputs.cmake-source-directory }}:/s" \
-          -v "${{ inputs.cmake-build-directory }}:/b" \
-          -v "${{ inputs.cmake-package-directory }}:/p" \
-          -e "SIL_KIT_CI_CMAKE_BINARY_DIR=/b" \
-          -e "SIL_KIT_CI_CMAKE_INSTALL_DIR=/b/i" \
-          -e "SIL_KIT_CI_CMAKE_PACKAGE_DIR=/p" \
-          -w "/s" \
-          "${{ inputs.linux-docker-image }}" \
-            cmake \
-              --build \
-              --preset "${{ inputs.preset-name }}" \
-              --target package
-
-        ls "${{ inputs.cmake-package-directory }}"
-
-        echo 'package-path=${{ inputs.cmake-package-directory }}/SilKit-*-*.zip'
         echo 'package-path=${{ inputs.cmake-package-directory }}/SilKit-*-*.zip' >> "$GITHUB_OUTPUT"
-
-    - name: (windows) package cmake project
-      id: cmake-package-windows
-      if: runner.os == 'Windows'
-      shell: powershell
-      working-directory: ${{ inputs.cmake-source-directory }}
-      env:
-        SIL_KIT_CI_CMAKE_BINARY_DIR: "${{ inputs.cmake-build-directory }}"
-        SIL_KIT_CI_CMAKE_INSTALL_DIR: "${{ inputs.cmake-build-directory }}/i"
-        SIL_KIT_CI_CMAKE_PACKAGE_DIR: "${{ inputs.cmake-package-directory }}"
-      run: |
-        cmake `
-          --build `
-          --preset "${{ inputs.preset-name }}" `
-          --target package
-
-        ls "${{ inputs.cmake-package-directory }}"
-
-        echo 'package-path=${{ inputs.cmake-package-directory }}/SilKit-*-*.zip'
-        echo 'package-path=${{ inputs.cmake-package-directory }}/SilKit-*-*.zip' >> "$env:GITHUB_OUTPUT"

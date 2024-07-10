@@ -1,0 +1,64 @@
+name: sil-kil-ci/execute-cmake
+
+description: Execute CMake.
+
+inputs:
+
+  preset-name:
+    description: The preset name from CMakePresets.json.
+    required: true
+
+  linux-docker-image:
+    default: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
+    description: Docker image used under Linux
+    required: false
+
+  cmake-source-directory:
+    description: The source directory for use by the cmake actions
+    required: true
+
+  cmake-build-directory:
+    description: The build directory for use by the cmake actions
+    required: true
+
+  cmake-package-directory:
+    description: The package directory for use by the cmake actions
+    required: true
+
+  command:
+    description: Command to execute
+    required: true
+
+  args:
+    description: Arguments passed to the command
+    required: true
+
+runs:
+  using: composite
+  steps:
+
+    - name: (linux) execute cmake on linux
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        docker run \
+          -v "${{ inputs.cmake-source-directory }}:/s" \
+          -v "${{ inputs.cmake-build-directory }}:/b" \
+          -v "${{ inputs.cmake-package-directory }}:/p" \
+          -e "SIL_KIT_CI_CMAKE_BINARY_DIR=/b" \
+          -e "SIL_KIT_CI_CMAKE_INSTALL_DIR=/b/i" \
+          -e "SIL_KIT_CI_CMAKE_PACKAGE_DIR=/p" \
+          -w "/s" \
+          "${{ inputs.linux-docker-image }}" \
+            "${{ inputs.command }}" ${{ inputs.args }}
+
+    - name: (windows) execute cmake on windows
+      if: runner.os == 'Windows'
+      shell: powershell
+      env:
+        SIL_KIT_CI_CMAKE_BINARY_DIR: "${{ inputs.cmake-build-directory }}"
+        SIL_KIT_CI_CMAKE_INSTALL_DIR: "${{ inputs.cmake-build-directory }}/i"
+        SIL_KIT_CI_CMAKE_PACKAGE_DIR: "${{ inputs.cmake-package-directory }}"
+      working-directory: ${{ inputs.cmake-source-directory }}
+      run: |
+        & "${{ inputs.command }}" ${{ inputs.args }}

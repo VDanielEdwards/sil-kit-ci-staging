@@ -29,32 +29,14 @@ runs:
   using: composite
   steps:
 
-    - name: (linux) configure cmake project
-      if: runner.os == 'Linux'
-      shell: bash
-      run: |
-        docker run \
-          -v "${{ inputs.cmake-source-directory }}:/s" \
-          -v "${{ inputs.cmake-build-directory }}:/b" \
-          -v "${{ inputs.cmake-package-directory }}:/p" \
-          -e "SIL_KIT_CI_CMAKE_BINARY_DIR=/b" \
-          -e "SIL_KIT_CI_CMAKE_INSTALL_DIR=/b/i" \
-          -e "SIL_KIT_CI_CMAKE_PACKAGE_DIR=/p" \
-          -w "/s" \
-          "${{ inputs.linux-docker-image }}" \
-            cmake \
-              --preset "${{ inputs.preset-name }}" \
-              -D CMAKE_PACKAGE_DIR=/p
-
-    - name: (windows) configure cmake project
-      if: runner.os == 'Windows'
-      shell: powershell
-      env:
-        SIL_KIT_CI_CMAKE_BINARY_DIR: "${{ inputs.cmake-build-directory }}"
-        SIL_KIT_CI_CMAKE_INSTALL_DIR: "${{ inputs.cmake-build-directory }}/i"
-        SIL_KIT_CI_CMAKE_PACKAGE_DIR: "${{ inputs.cmake-package-directory }}"
-      working-directory: ${{ inputs.cmake-source-directory }}
-      run: |
-        cmake `
-          --preset "${{ inputs.preset-name }}" `
-          -D "CMAKE_PACKAGE_DIR=${{ inputs.cmake-package-directory }}"
+    - name: (all) configure cmake project
+      uses: ./.github/actions/sil-kit-ci/execute-command
+      with:
+        linux-docker-image: ${{ inputs.linux-docker-image }}
+        msvc-arch: ${{ inputs.msvc-arch }}
+        msvc-toolset: ${{ inputs.msvc-toolset }}
+        cmake-source-directory: ${{ inputs.cmake-source-directory }}
+        cmake-build-directory: ${{ inputs.cmake-build-directory }}
+        cmake-package-directory: ${{ inputs.cmake-package-directory }}
+        command: cmake
+        args: --preset "${{ inputs.preset-name }}"
