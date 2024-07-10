@@ -60,7 +60,9 @@ runs:
               --preset "${{ inputs.preset-name }}" \
               --target package
 
-        echo 'package
+        ls "${{ inputs.cmake-package-directory }}"
+
+        echo 'package-path=${{ inputs.cmake-package-directory }}/*/ZIP/SilKit-*-*.zip'
         echo 'package-path=${{ inputs.cmake-package-directory }}/*/ZIP/SilKit-*-*.zip' >> "$GITHUB_OUTPUT"
 
     - name: (windows) package cmake project
@@ -76,3 +78,8 @@ runs:
           --build `
           --preset "${{ inputs.preset-name }}" `
           --target package
+
+        ls "${{ inputs.cmake-package-directory }}"
+
+        echo 'package-path=${{ inputs.cmake-package-directory }}/*/ZIP/SilKit-*-*.zip'
+        echo 'package-path=${{ inputs.cmake-package-directory }}/*/ZIP/SilKit-*-*.zip' >> "$env:GITHUB_OUTPUT"
