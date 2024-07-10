@@ -33,7 +33,7 @@ jobs:
           preset-name: ci-linux
           upload-artifacts: true
           retention-days: 1
-          package-name: silkit-linux.zip
+          package-name: silkit-linux
 
   build-windows-x86:
     name: Windows (x86)
@@ -57,7 +57,7 @@ jobs:
           msvc-toolset: 14.1
           upload-artifacts: true
           retention-days: 1
-          package-name: silkit-windows-x86.zip
+          package-name: silkit-windows-x86
 
   build-windows-x64:
     name: Windows (x64)
@@ -81,4 +81,4 @@ jobs:
           msvc-toolset: 14.1
           upload-artifacts: true
           retention-days: 1
-          package-name: silkit-windows-x64.zip
+          package-name: silkit-windows-x64
