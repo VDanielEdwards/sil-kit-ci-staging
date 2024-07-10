@@ -20,7 +20,7 @@ on:
 
 jobs:
 
-  run:
+  build-linux:
     name: Linux
     uses: ./.github/workflows/sil-kit-ci-manual-build-package.yml
     if: inputs.run == true

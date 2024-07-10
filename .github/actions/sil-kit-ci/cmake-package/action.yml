@@ -12,6 +12,10 @@ inputs:
     description: Docker image used under Linux
     required: true
 
+  cmake-package-args:
+    description: ''
+    required: true
+
 outputs:
 
   package-path:
@@ -33,7 +37,7 @@ runs:
       with:
         preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        command: cmake --build --preset "${{ inputs.preset-name }}" --target package
+        command: cmake --build --preset "${{ inputs.preset-name }}" --target package ${{ inputs.cmake-package-args }}
 
     - name: (linux, windows) compute outputs
       id: compute-outputs

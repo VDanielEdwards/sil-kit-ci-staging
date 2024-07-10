@@ -97,7 +97,8 @@ runs:
       id: cmake-package
       with:
         preset-name: ${{ inputs.preset-name }}
-        linux-docker-image: ${{ inputs.linux-docker-image }} ${{ inputs.cmake-package-args }}
+        linux-docker-image: ${{ inputs.linux-docker-image }}
+        cmake-package-args: ${{ inputs.cmake-package-args }}
 
     - name: upload-artifacts
       uses: ./.github/actions/sil-kit-ci/upload-artifacts
