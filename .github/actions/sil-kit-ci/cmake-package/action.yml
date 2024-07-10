@@ -33,8 +33,7 @@ runs:
       with:
         preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        command: cmake
-        args: --build --preset "${{ inputs.preset-name }}" --target package
+        command: cmake --build --preset "${{ inputs.preset-name }}" --target package
 
     - name: (linux, windows) compute outputs
       id: compute-outputs

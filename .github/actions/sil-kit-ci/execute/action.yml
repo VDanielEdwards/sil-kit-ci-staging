@@ -16,11 +16,7 @@ inputs:
     required: true
 
   command:
-    description: Command to execute
-    required: true
-
-  args:
-    description: Arguments passed to the command
+    description: Command line to be executed
     required: true
 
 runs:
@@ -46,7 +42,7 @@ runs:
           -e "SIL_KIT_CI_CMAKE_PACKAGE_DIR=/p" \
           -w "/s" \
           "${{ inputs.linux-docker-image }}" \
-            "${{ inputs.command }}" ${{ inputs.args }}
+            ${{ inputs.command }}
 
     - name: (windows) execute command
       if: runner.os == 'Windows'
@@ -57,4 +53,4 @@ runs:
         SIL_KIT_CI_CMAKE_PACKAGE_DIR: "${{ steps.dirs.outputs.cmake-package }}"
       working-directory: ${{ steps.dirs.outputs.cmake-source }}
       run: |
-        & "${{ inputs.command }}" ${{ inputs.args }}
+        & ${{ inputs.command }}
