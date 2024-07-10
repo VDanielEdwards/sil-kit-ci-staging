@@ -36,33 +36,19 @@ runs:
         path: ${{ steps.dirs.outputs.cmake-source }}
         submodules: true
 
-    - name: (linux) cleanup build and package directories
-      if: runner.os == 'Linux'
+    - name: (linux, windows) cleanup build and package directories
+      if: runner.os == 'Linux' || runner.os == 'Windows'
       shell: bash
       run: |
         rm -rf "${{ steps.dirs.outputs.cmake-build }}"
         rm -rf "${{ steps.dirs.outputs.cmake-package }}"
 
-    - name: (windows) cleanup build and package directories
-      if: runner.os == 'Windows'
-      shell: powershell
-      run: |
-        if (Test-Path "${{ steps.dirs.outputs.cmake-build }}") { Remove-Item -Recurse -Force "${{ inputs.cmake-build-directory }}" }
-        if (Test-Path "${{ steps.dirs.outputs.cmake-package }}") { Remove-Item -Recurse -Force "${{ inputs.cmake-package-directory }}" }
-
-    - name: (linux) create build and package directories
-      if: runner.os == 'Linux'
+    - name: (linux, windows) create build and package directories
+      if: runner.os == 'Linux' || runner.os == 'Windows'
       shell: bash
       run: |
         mkdir -p "${{ steps.dirs.outputs.cmake-build }}"
         mkdir -p "${{ steps.dirs.outputs.cmake-package }}"
-
-    - name: (windows) cleanup build and package directories
-      if: runner.os == 'Windows'
-      shell: powershell
-      run: |
-        $null = New-Item -ItemType Directory -Force "${{ steps.dirs.outputs.cmake-build }}"
-        $null = New-Item -ItemType Directory -Force "${{ steps.dirs.outputs.cmake-package }}"
 
     - name: (linux) pull docker image for building via cmake
       if: runner.os == 'Linux'
