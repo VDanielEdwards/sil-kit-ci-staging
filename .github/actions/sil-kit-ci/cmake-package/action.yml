@@ -38,9 +38,9 @@ runs:
       uses: ./.github/actions/sil-kit-ci/execute-command
       with:
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
-        cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
-        cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
+        cmake-source-directory: ${{ inputs.cmake-source-directory }}
+        cmake-build-directory: ${{ inputs.cmake-build-directory }}
+        cmake-package-directory: ${{ inputs.cmake-package-directory }}
         command: cmake
         args: --build --preset "${{ inputs.preset-name }}" --target package
 
