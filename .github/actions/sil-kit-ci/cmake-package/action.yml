@@ -12,14 +12,6 @@ inputs:
     description: Docker image used under Linux
     required: true
 
-  msvc-arch:
-    description: Target architecture used under Windows/MSVC
-    required: true
-
-  msvc-toolset:
-    description: Target toolset used under Windows/MSVC
-    required: true
-
   cmake-source-directory:
     description: The source directory for use by the cmake actions
     required: true
@@ -46,8 +38,6 @@ runs:
       uses: ./.github/actions/sil-kit-ci/execute-command
       with:
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        msvc-arch: ${{ inputs.msvc-arch }}
-        msvc-toolset: ${{ inputs.msvc-toolset }}
         cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}

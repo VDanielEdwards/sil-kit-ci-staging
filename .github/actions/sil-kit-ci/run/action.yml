@@ -53,8 +53,6 @@ runs:
       id: setup
       with:
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        msvc-arch: ${{ inputs.msvc-arch }}
-        msvc-toolset: ${{ inputs.msvc-toolset }}
         cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
@@ -65,8 +63,6 @@ runs:
       with:
         preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        msvc-arch: ${{ inputs.msvc-arch }}
-        msvc-toolset: ${{ inputs.msvc-toolset }}
         cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
@@ -77,8 +73,6 @@ runs:
       with:
         preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        msvc-arch: ${{ inputs.msvc-arch }}
-        msvc-toolset: ${{ inputs.msvc-toolset }}
         cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
@@ -89,8 +83,6 @@ runs:
       with:
         preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        msvc-arch: ${{ inputs.msvc-arch }}
-        msvc-toolset: ${{ inputs.msvc-toolset }}
         cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
@@ -101,8 +93,6 @@ runs:
       with:
         preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        msvc-arch: ${{ inputs.msvc-arch }}
-        msvc-toolset: ${{ inputs.msvc-toolset }}
         cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
         cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
         cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}

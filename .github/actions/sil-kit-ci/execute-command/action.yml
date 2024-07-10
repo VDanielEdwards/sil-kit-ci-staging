@@ -4,10 +4,6 @@ description: Execute CMake.
 
 inputs:
 
-  preset-name:
-    description: The preset name from CMakePresets.json.
-    required: true
-
   linux-docker-image:
     default: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
     description: Docker image used under Linux
@@ -37,7 +33,7 @@ runs:
   using: composite
   steps:
 
-    - name: (linux) execute cmake on linux
+    - name: (linux) execute command
       if: runner.os == 'Linux'
       shell: bash
       run: |
@@ -52,7 +48,7 @@ runs:
           "${{ inputs.linux-docker-image }}" \
             "${{ inputs.command }}" ${{ inputs.args }}
 
-    - name: (windows) execute cmake on windows
+    - name: (windows) execute command
       if: runner.os == 'Windows'
       shell: powershell
       env:
