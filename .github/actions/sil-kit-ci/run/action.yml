@@ -42,12 +42,6 @@ runs:
   using: composite
   steps:
 
-    - name: compute directories
-      uses: ./.github/actions/sil-kit-ci/dirs
-      id: dirs
-      with:
-        preset-name: ${{ inputs.preset-name }}
-
     - name: setup
       uses: ./.github/actions/sil-kit-ci/setup
       id: setup
