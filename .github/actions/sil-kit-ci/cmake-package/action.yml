@@ -1,6 +1,6 @@
-name: sil-kil-ci/cmake-build
+name: sil-kil-ci/cmake-package
 
-description: Package the project with CMake (CTest).
+description: Package the project with CMake (CPack).
 
 inputs:
 
