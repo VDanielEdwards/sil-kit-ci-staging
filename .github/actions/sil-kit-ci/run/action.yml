@@ -11,7 +11,7 @@ inputs:
   linux-docker-image:
     description: Docker image used under Linux
     required: false
-    default: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-22.04:main
+    default: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-18.04:main
 
   msvc-arch:
     description: Target architecture used under Windows/MSVC
