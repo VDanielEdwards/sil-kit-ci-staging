@@ -52,40 +52,32 @@ runs:
       uses: ./.github/actions/sil-kit-ci/setup
       id: setup
       with:
+        preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
         msvc-arch: ${{ inputs.msvc-arch }}
         msvc-toolset: ${{ inputs.msvc-toolset }}
-        cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
-        cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
-        cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
 
     - name: configure cmake project
       uses: ./.github/actions/sil-kit-ci/execute
       with:
+        preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
-        cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
-        cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
         command: cmake
         args: --preset "${{ inputs.preset-name }}"
 
     - name: build cmake project
       uses: ./.github/actions/sil-kit-ci/execute
       with:
+        preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
-        cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
-        cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
         command: cmake
         args: --build --preset "${{ inputs.preset-name }}" --parallel
 
     - name: test cmake project
       uses: ./.github/actions/sil-kit-ci/execute
       with:
+        preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
-        cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
-        cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
         command: ctest
         args: --preset "${{ inputs.preset-name }}" -R '^Test_'
 
@@ -95,15 +87,11 @@ runs:
       with:
         preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        cmake-source-directory: ${{ steps.dirs.outputs.cmake-source }}
-        cmake-build-directory: ${{ steps.dirs.outputs.cmake-build }}
-        cmake-package-directory: ${{ steps.dirs.outputs.cmake-package }}
 
     - name: upload-artifacts
       uses: ./.github/actions/sil-kit-ci/upload-artifacts
       id: upload-artifacts
       with:
-        preset-name: ${{ inputs.preset-name }}
         upload-artifacts: ${{ inputs.upload-artifacts }}
         retention-days: ${{ inputs.retention-days }}
         package-name: ${{ inputs.package-name }}

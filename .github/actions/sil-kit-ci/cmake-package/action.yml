@@ -12,18 +12,6 @@ inputs:
     description: Docker image used under Linux
     required: true
 
-  cmake-source-directory:
-    description: The source directory for use by the cmake actions
-    required: true
-
-  cmake-build-directory:
-    description: The build directory for use by the cmake actions
-    required: true
-
-  cmake-package-directory:
-    description: The package directory for use by the cmake actions
-    required: true
-
 outputs:
 
   package-path:
@@ -34,13 +22,17 @@ runs:
   using: composite
   steps:
 
+    - name: compute directories
+      uses: ./.github/actions/sil-kit-ci/dirs
+      id: dirs
+      with:
+        preset-name: ${{ inputs.preset-name }}
+
     - name: (all) build cmake project
       uses: ./.github/actions/sil-kit-ci/execute
       with:
+        preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        cmake-source-directory: ${{ inputs.cmake-source-directory }}
-        cmake-build-directory: ${{ inputs.cmake-build-directory }}
-        cmake-package-directory: ${{ inputs.cmake-package-directory }}
         command: cmake
         args: --build --preset "${{ inputs.preset-name }}" --target package
 
