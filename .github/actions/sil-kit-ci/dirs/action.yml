@@ -1,6 +1,6 @@
 name: sil-kil-ci/dirs
 
-description: Package the project with CMake (CTest).
+description: Compute various directories as outputs for use in other actions.
 
 inputs:
 
