@@ -58,22 +58,17 @@ runs:
       with:
         preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        msvc-arch: ${{ inputs.msvc-arch }}
-        msvc-toolset: ${{ inputs.msvc-toolset }}
-
-    - name: compute cmake configure arguments
-      uses: ./.github/actions/sil-kit-ci/cmake-configure-args
-      id: cmake-configure-args
-      with:
         linux-c-compiler: ${{ inputs.linux-c-compiler }}
         linux-cxx-compiler: ${{ inputs.linux-cxx-compiler }}
+        msvc-arch: ${{ inputs.msvc-arch }}
+        msvc-toolset: ${{ inputs.msvc-toolset }}
 
     - name: configure cmake project
       uses: ./.github/actions/sil-kit-ci/execute
       with:
         preset-name: ${{ inputs.preset-name }}
         linux-docker-image: ${{ inputs.linux-docker-image }}
-        command: cmake --preset "${{ inputs.preset-name }}" ${{ steps.cmake-configure-args.outputs.compilers }}
+        command: cmake --preset "${{ inputs.preset-name }}" ${{ steps.setup.outputs.cmake-configure-args }}
 
     - name: build cmake project
       uses: ./.github/actions/sil-kit-ci/execute

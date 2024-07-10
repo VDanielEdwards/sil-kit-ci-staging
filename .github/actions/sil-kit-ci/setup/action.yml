@@ -12,6 +12,14 @@ inputs:
     description: Docker image used under Linux
     required: true
 
+  linux-c-compiler:
+    description: C compiler used under Linux
+    required: true
+
+  linux-cxx-compiler:
+    description: C++ compiler used under Linux
+    required: true
+
   msvc-arch:
     description: Target architecture used under Windows/MSVC
     required: true
@@ -19,6 +27,12 @@ inputs:
   msvc-toolset:
     description: Target toolset used under Windows/MSVC
     required: true
+
+outputs:
+
+  cmake-configure-args:
+    description: Extra arguments passed to cmake during configuration
+    value: ${{ join(steps.*.outputs.cmake-configure-args, ' ') }}
 
 runs:
   using: composite
@@ -49,6 +63,18 @@ runs:
       run: |
         mkdir -p "${{ steps.dirs.outputs.cmake-build }}"
         mkdir -p "${{ steps.dirs.outputs.cmake-package }}"
+
+    - name: (linux) select c compiler
+      id: linux-cmake-configure-args-c-compiler
+      if: runner.os == 'Linux'
+      shell: bash
+      run: echo 'cmake-configure-args=-DCMAKE_C_COMPILER=${{ inputs.linux-c-compiler }}' >> "$GITHUB_OUTPUT"
+
+    - name: (linux) select c++ compiler
+      id: linux-cmake-configure-args-cxx-compiler
+      if: runner.os == 'Linux'
+      shell: bash
+      run: echo 'cmake-configure-args=-DCMAKE_CXX_COMPILER=${{ inputs.linux-cxx-compiler }}' >> "$GITHUB_OUTPUT"
 
     - name: (linux) pull docker image for building via cmake
       if: runner.os == 'Linux'
