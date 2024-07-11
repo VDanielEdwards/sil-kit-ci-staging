@@ -145,5 +145,5 @@ jobs:
           msvc-toolset: ${{ steps.extra.outputs.msvc-toolset || '14.1' }}
           cmake-configure-args: ${{ steps.extra.outputs.cmake-configure-args }}
           cmake-build-args: ${{ steps.extra.outputs.cmake-build-args }}
-          ctest-args: ${{ steps.extra.outputs.ctest-args }}
+          ctest-args: ${{ steps.extra.outputs.ctest-args || '-R "^I?Test"' }}
           cmake-package-args: ${{ steps.extra.outputs.cmake-package-args }}
