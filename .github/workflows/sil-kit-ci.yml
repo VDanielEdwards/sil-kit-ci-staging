@@ -83,6 +83,7 @@ jobs:
     uses: ./.github/workflows/sil-kit-ci-build-packages.yml
     needs: [ check-licenses, check-run-builds ]
     with:
+      upload-artifacts: true
       retention-days: ${{ github.event_name == 'push' && 2 || 1 }}
       run: ${{ needs.check-run-builds.outputs.run_builds == 'true' }}
 
