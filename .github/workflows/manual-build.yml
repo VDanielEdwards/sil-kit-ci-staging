@@ -1,0 +1,120 @@
+name: 'Manual Build'
+
+on:
+
+  workflow_dispatch:
+    inputs:
+
+      runs-on:
+        description: Type of machine to run the job on
+        required: true
+        type: choice
+        options:
+          - ubuntu-22.04
+          - windows-2019
+
+      preset-name:
+        description: The CMake preset used for configuration and building
+        required: true
+        type: choice
+        options:
+          - ci-linux
+          - ci-windows
+
+      upload-artifacts:
+        description: If true, the created packages are uploaded as artifacts
+        required: true
+        type: boolean
+        default: false
+
+      retention-days:
+        description: The number of days to keep the uploaded artifacts
+        required: true
+        type: number
+        default: 1
+
+      package-name:
+        description: The name of the generated artifact
+        required: true
+        type: string
+        default: sil-kit
+
+      extra:
+        description: |
+          Additional arguments to the workflow as a single JSON object.
+
+          The following JSON object is expected (all fields are optional):
+
+            {
+              "linux": {
+                "docker": { "image": "..." }
+              },
+              "c": { "compiler": "..." },
+              "c++": { "compiler": "..." },
+              "msvc": {
+                "arch": "...",
+                "toolset": "..."
+              },
+              "cmake": {
+                "configure": { "args": "..." },
+                "build": { "args": "..." },
+                "package": { "args": "..." }
+              },
+              "ctest": {
+                "args": "..."
+              }
+            }
+        required: false
+        type: string
+        default: '{}'
+
+jobs:
+
+  run:
+    name: Manual Build (${{ inputs.preset-name }} on ${{ inputs.runs-on }})
+
+    environment: public-github-runners
+    runs-on: ${{ inputs.runs-on }}
+
+    steps:
+
+      - name: checkout sil-kit workflows and actions
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          sparse-checkout: .github
+
+      - name: parse extra arguments
+        id: extra
+        if: runner.os == 'Linux' || runner.os == 'Windows'
+        shell: bash
+        env:
+          MANUAL_RUN_EXTRA_ARGS: '${{ inputs.extra }}'
+        run: |
+          extract() { jq --raw-output "$1"' // ""' <<<"$MANUAL_RUN_EXTRA_ARGS" ; }
+          echo "linux-docker-image=$( extract '.linux.docker.image' )" >> $GITHUB_OUTPUT
+          echo "c-compiler=$( extract '.c.compiler' )" >> $GITHUB_OUTPUT
+          echo "cxx-compiler=$( extract '."c++".compiler' )" >> $GITHUB_OUTPUT
+          echo "msvc-arch=$( extract '.msvc.arch' )" >> $GITHUB_OUTPUT
+          echo "msvc-toolset=$( extract '.msvc.toolset' )" >> $GITHUB_OUTPUT
+          echo "cmake-configure-args=$( extract '.cmake.configure.args' )" >> $GITHUB_OUTPUT
+          echo "cmake-build-args=$( extract '.cmake.build.args' )" >> $GITHUB_OUTPUT
+          echo "ctest-args=$( extract '.ctest.args' )" >> $GITHUB_OUTPUT
+          echo "cmake-package-args=$( extract '.cmake.package.args' )" >> $GITHUB_OUTPUT
+
+      - name: run ci build
+        uses: ./.github/actions/sil-kit-ci/build-sil-kit
+        with:
+          preset-name: ${{ inputs.preset-name }}
+          upload-artifacts: ${{ inputs.upload-artifacts }}
+          retention-days: ${{ inputs.retention-days }}
+          package-name: ${{ inputs.package-name }}
+          linux-docker-image: ${{ steps.extra.outputs.linux-docker-image || 'ghcr.io/mariusbgm/sil-kit-ci-ubuntu-18.04:main' }}
+          linux-c-compiler: ${{ steps.extra.outputs.c-compiler || 'gcc-8' }}
+          linux-cxx-compiler: ${{ steps.extra.outputs.cxx-compiler || 'g++-8' }}
+          msvc-arch: ${{ steps.extra.outputs.msvc-arch || 'x64' }}
+          msvc-toolset: ${{ steps.extra.outputs.msvc-toolset || '14.1' }}
+          cmake-configure-args: ${{ steps.extra.outputs.cmake-configure-args }}
+          cmake-build-args: ${{ steps.extra.outputs.cmake-build-args }}
+          ctest-args: ${{ steps.extra.outputs.ctest-args || '-R "^I?Test"' }}
+          cmake-package-args: ${{ steps.extra.outputs.cmake-package-args }}

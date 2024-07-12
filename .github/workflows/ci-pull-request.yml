@@ -1,0 +1,31 @@
+name: "CI for Pull Requests"
+
+on:
+
+  pull_request:
+    branches: [ 'main' ]
+
+concurrency:
+
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  linux-fast:
+    name: 'Linux (fast)'
+    uses: ./.github/workflows/call-build.yml
+    with:
+      runs-on: ubuntu-22.04
+      preset-name: ci
+      upload-artifacts: false
+      c-compiler: gcc-8
+      cxx-compiler: g++-8
+
+  windows-x64-fast:
+    name: 'Windows (x64, fast)'
+    uses: ./.github/workflows/sil-kit-ci-build-packages.yml
+    with:
+      runs-on: windows-2019
+      preset-name: ci
+      upload-artifacts: false
