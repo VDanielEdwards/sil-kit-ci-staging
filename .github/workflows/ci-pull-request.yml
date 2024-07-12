@@ -27,7 +27,7 @@ jobs:
 
   windows-x64-fast:
     name: 'Windows (x64, fast)'
-    uses: ./.github/workflows/sil-kit-ci-build-packages.yml
+    uses: ./.github/workflows/call-build.yml
     with:
       runs-on: windows-2019
       preset-name: ci
