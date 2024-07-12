@@ -21,6 +21,9 @@ jobs:
       upload-artifacts: false
       c-compiler: gcc-8
       cxx-compiler: g++-8
+      cmake-configure-args: >
+        -D CMAKE_C_FLAGS_RELEASE="-g0 -O0"
+        -D CMAKE_CXX_FLAGS_RELEASE="-g0 -O0"
 
   windows-x64-fast:
     name: 'Windows (x64, fast)'
@@ -29,3 +32,6 @@ jobs:
       runs-on: windows-2019
       preset-name: ci
       upload-artifacts: false
+      cmake-configure-args: >
+        -D CMAKE_C_FLAGS_RELEASE="/Od"
+        -D CMAKE_CXX_FLAGS_RELEASE="/Od"
