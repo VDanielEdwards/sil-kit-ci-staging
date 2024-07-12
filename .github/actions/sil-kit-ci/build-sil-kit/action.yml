@@ -129,7 +129,7 @@ runs:
           ${{ inputs.ctest-args }}
 
     - name: package cmake project
-      uses: ./.github/actions/sil-kit-ci/execute
+      uses: ./.github/actions/sil-kit-ci/impl-execute
       with:
         linux-docker-image: ${{ inputs.linux-docker-image }}
         work-dir: ${{ env.work-dir }}
