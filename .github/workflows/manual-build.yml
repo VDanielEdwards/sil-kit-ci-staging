@@ -108,8 +108,8 @@ jobs:
           retention-days: ${{ inputs.retention-days }}
           package-name: ${{ inputs.package-name }}
           linux-docker-image: ${{ steps.extra.outputs.linux-docker-image || 'ghcr.io/mariusbgm/sil-kit-ci-ubuntu-18.04:main' }}
-          linux-c-compiler: ${{ steps.extra.outputs.c-compiler }}
-          linux-cxx-compiler: ${{ steps.extra.outputs.cxx-compiler }}
+          c-compiler: ${{ steps.extra.outputs.c-compiler }}
+          cxx-compiler: ${{ steps.extra.outputs.cxx-compiler }}
           msvc-arch: ${{ steps.extra.outputs.msvc-arch || 'x64' }}
           msvc-toolset: ${{ steps.extra.outputs.msvc-toolset || '14.1' }}
           cmake-configure-args: ${{ steps.extra.outputs.cmake-configure-args }}
