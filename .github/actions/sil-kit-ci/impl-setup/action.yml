@@ -53,7 +53,8 @@ runs:
       run: |
         # compute work directory
         work_dir="${{ github.workspace }}/w"
-        echo "work=${work_dir}" >> "$GITHUB_OUTPUT"
+        # replace backslashes with slashes, since github.workspace might be a windows path
+        echo "work=${work_dir//\\//}" >> "$GITHUB_OUTPUT"
 
     - shell: bash
       run: |
