@@ -74,16 +74,14 @@ runs:
     - shell: bash
       id: dirs
       run: |
-        echo "::group::compute work directories and store them in the env"
+        # compute directories
         echo "work-dir=${{ steps.setup.outputs.work-dir }}" >> "$GITHUB_ENV"
         echo "relative-working-dir=src/sil-kit" >> "$GITHUB_ENV"
-        echo "::endgroup::"
 
     - shell: bash
       run: |
-        echo "::group::cleanup source, build, and package directories"
-        rm -rf ${{ env.work-dir }}/{src,bld,pkg}/sil-kit
-        echo "::endgroup::"
+        # remove source, build, and package directories
+        rm -rfv ${{ env.work-dir }}/{src,bld,pkg}/sil-kit
 
     # checkout
 
