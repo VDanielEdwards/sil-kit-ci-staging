@@ -28,7 +28,7 @@ outputs:
 
   work-dir:
     description: Work directory for the `impl-*` actions
-    value: ${{ steps.dirs.work }}
+    value: ${{ steps.dirs.outputs.work }}
 
   cmake-configure-args:
     description: Extra arguments passed to cmake during configuration
