@@ -51,36 +51,36 @@ runs:
     - shell: bash
       id: dirs
       run: |
-        echo "::group::compute directories"
+        # compute work directory
         work_dir="${{ github.workspace }}/w"
         echo "work=${work_dir}" >> "$GITHUB_OUTPUT"
-        echo "::endgroup::"
 
     - shell: bash
       run: |
-        echo "::group::ensure work directory exists"
+        # ensure work directory exists
         mkdir -pv "${{ steps.dirs.outputs.work }}"
-        echo "::endgroup::"
 
     # compute cmake configure arguments
 
     - id: cmake-configure-args-c-compiler
       if: inputs.c-compiler != ''
       shell: bash
-      run: echo 'cmake-configure-args=-DCMAKE_C_COMPILER=${{ inputs.c-compiler }}' >> "$GITHUB_OUTPUT"
+      run: |
+        echo 'cmake-configure-args=-DCMAKE_C_COMPILER=${{ inputs.c-compiler }}' >> "$GITHUB_OUTPUT"
 
-    - name: (linux) select c++ compiler
-      id: cmake-configure-args-cxx-compiler
+    - id: cmake-configure-args-cxx-compiler
       if: inputs.cxx-compiler != ''
       shell: bash
-      run: echo 'cmake-configure-args=-DCMAKE_CXX_COMPILER=${{ inputs.cxx-compiler }}' >> "$GITHUB_OUTPUT"
+      run: |
+        echo 'cmake-configure-args=-DCMAKE_CXX_COMPILER=${{ inputs.cxx-compiler }}' >> "$GITHUB_OUTPUT"
 
     # setup: prepare build environment
 
-    - name: (linux) pull docker image for building via cmake
-      if: runner.os == 'Linux'
+    - if: runner.os == 'Linux'
       shell: bash
-      run: docker pull "${{ inputs.linux-docker-image }}"
+      run: |
+        # pull docker image for building via cmake
+        docker pull "${{ inputs.linux-docker-image }}"
 
     - name: (windows) setup msvc environment
       if: runner.os == 'Windows'
