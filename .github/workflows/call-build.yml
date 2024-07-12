@@ -14,51 +14,53 @@ on:
         type: string
 
       upload-artifacts:
-        required: true
+        required: false
         type: boolean
+        default: false
 
       retention-days:
-        required: true
+        required: false
         type: number
+        default: 0
 
       package-name:
-        required: true
+        required: false
         type: string
 
       linux-docker-image:
-        required: true
+        required: false
         type: string
 
-      linux-c-compiler:
-        required: true
+      c-compiler:
+        required: false
         type: string
 
-      linux-cxx-compiler:
-        required: true
+      cxx-compiler:
+        required: false
         type: string
 
       msvc-arch:
-        required: true
+        required: false
         type: string
 
       msvc-toolset:
-        required: true
+        required: false
         type: string
 
       cmake-configure-args:
-        required: true
+        required: false
         type: string
 
       cmake-build-args:
-        required: true
+        required: false
         type: string
 
       ctest-args:
-        required: true
+        required: false
         type: string
 
       cmake-package-args:
-        required: true
+        required: false
         type: string
 
 jobs:
