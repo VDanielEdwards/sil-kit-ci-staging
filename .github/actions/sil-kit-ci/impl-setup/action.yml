@@ -1,0 +1,90 @@
+name: sil-kit-ci/impl-setup
+
+description: Setup the environment for the other CI actions.
+
+inputs:
+
+  linux-docker-image:
+    description: Docker image used under Linux
+    required: true
+
+  c-compiler:
+    description: C compiler used under Linux
+    required: true
+
+  cxx-compiler:
+    description: C++ compiler used under Linux
+    required: true
+
+  msvc-arch:
+    description: Target architecture used under Windows/MSVC
+    required: true
+
+  msvc-toolset:
+    description: Target toolset used under Windows/MSVC
+    required: true
+
+outputs:
+
+  work-dir:
+    description: Work directory for the `impl-*` actions
+    value: ${{ steps.dirs.work }}
+
+  cmake-configure-args:
+    description: Extra arguments passed to cmake during configuration
+    value: ${{ join(steps.*.outputs.cmake-configure-args, ' ') }}
+
+runs:
+  using: composite
+  steps:
+
+    # fail-early: check runner is suitable for the build
+
+    - if: runner.os != 'Linux' && runner.os != 'Windows'
+      shell: bash
+      run: |
+        echo "::error title=check runner os::only Linux and Windows runners are supported by this action"
+        exit 1
+
+    # setup: compute and provide clean work directory
+
+    - shell: bash
+      id: dirs
+      run: |
+        echo "::group::compute directories"
+        work_dir="${{ github.workspace }}/w"
+        echo "work=${work_dir}" >> "$GITHUB_OUTPUT"
+        echo "::endgroup::"
+
+    - shell: bash
+      run: |
+        echo "::group::ensure work directory exists"
+        mkdir -pv "${{ steps.dirs.outputs.work }}"
+        echo "::endgroup::"
+
+    # compute cmake configure arguments
+
+    - id: cmake-configure-args-c-compiler
+      if: inputs.c-compiler != ''
+      shell: bash
+      run: echo 'cmake-configure-args=-DCMAKE_C_COMPILER=${{ inputs.c-compiler }}' >> "$GITHUB_OUTPUT"
+
+    - name: (linux) select c++ compiler
+      id: cmake-configure-args-cxx-compiler
+      if: inputs.cxx-compiler != ''
+      shell: bash
+      run: echo 'cmake-configure-args=-DCMAKE_CXX_COMPILER=${{ inputs.cxx-compiler }}' >> "$GITHUB_OUTPUT"
+
+    # setup: prepare build environment
+
+    - name: (linux) pull docker image for building via cmake
+      if: runner.os == 'Linux'
+      shell: bash
+      run: docker pull "${{ inputs.linux-docker-image }}"
+
+    - name: (windows) setup msvc environment
+      if: runner.os == 'Windows'
+      uses: ilammy/msvc-dev-cmd@v1.13.0
+      with:
+        arch: ${{ inputs.msvc-arch }}
+        toolset: ${{ inputs.msvc-toolset }}

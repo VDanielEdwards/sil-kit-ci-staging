@@ -1,0 +1,146 @@
+name: sil-kit-ci/build-sil-kit
+
+description: Run the SIL Kit CI builds.
+
+inputs:
+
+  preset-name:
+    description: The preset name from CMakePresets.json
+    required: true
+
+  linux-docker-image:
+    description: Docker image used under Linux
+    required: true
+
+  c-compiler:
+    description: C compiler used under Linux
+    required: true
+
+  cxx-compiler:
+    description: C++ compiler used under Linux
+    required: true
+
+  msvc-arch:
+    description: Target architecture used under Windows/MSVC
+    required: true
+
+  msvc-toolset:
+    description: Target toolset used under Windows/MSVC
+    required: true
+
+  upload-artifacts:
+    description: Determines if artifacts created by the actions should be uploaded
+    required: true
+
+  retention-days:
+    description: Determines the number of days any uploaded artifacts should be retained
+    required: true
+
+  package-name:
+    description: Name of the package to upload as an artifact
+    required: true
+
+  cmake-configure-args:
+    description: Extra arguments passed to cmake during configuration
+    required: true
+
+  cmake-build-args:
+    description: Extra arguments passed to cmake during building
+    required: true
+
+  ctest-args:
+    description: Extra arguments passed to ctest
+    required: true
+
+  cmake-package-args:
+    description: Extra arguments passed to cmake during packaging
+    required: true
+
+runs:
+  using: composite
+  steps:
+
+      # setup: compute directories for the sil-kit build
+
+    - uses: ./.github/actions/sil-kit-ci/impl-setup
+      id: setup
+      with:
+        linux-docker-image: ${{ inputs.linux-docker-image }}
+        c-compiler: ${{ inputs.c-compiler }}
+        cxx-compiler: ${{ inputs.cxx-compiler }}
+        msvc-arch: ${{ inputs.msvc-arch }}
+        msvc-toolset: ${{ inputs.msvc-toolset }}
+
+    - shell: bash
+      id: dirs
+      run: |
+        echo "::group::compute work directories and store them in the env"
+        echo "work-dir=${{ steps.setup.outputs.work-dir }}" >> "$GITHUB_ENV"
+        echo "relative-working-dir=src/sil-kit" >> "$GITHUB_ENV"
+        echo "::endgroup::"
+
+    - shell: bash
+      run: |
+        echo "::group::cleanup source, build, and package directories"
+        rm -rf ${{ env.work-dir }}/{src,bld,pkg}/sil-kit
+        echo "::endgroup::"
+
+    # checkout
+
+    - name: checkout sil-kit sources
+      uses: actions/checkout@v4
+      with:
+        path: ${{ env.work-dir }}/src/sil-kit
+        submodules: true
+
+    # configure, build, test, and package
+
+    - name: configure cmake project
+      uses: ./.github/actions/sil-kit-ci/impl-execute
+      with:
+        linux-docker-image: ${{ inputs.linux-docker-image }}
+        command: >
+          cmake
+          -B "${WORK_DIR}/bld/sil-kit"
+          --preset "${{ inputs.preset-name }}"
+          ${{ steps.setup.outputs.cmake-configure-args }}
+          ${{ inputs.cmake-configure-args }}
+          -D CPACK_PACKAGE_DIRECTORY="${WORK_DIR}/pkg/sil-kit"
+
+    - name: build cmake project
+      uses: ./.github/actions/sil-kit-ci/impl-execute
+      with:
+        linux-docker-image: ${{ inputs.linux-docker-image }}
+        command: >
+          cmake
+          --build "${WORK_DIR}/bld/sil-kit"
+          --parallel
+          ${{ inputs.cmake-build-args }}
+
+    - name: test cmake project
+      uses: ./.github/actions/sil-kit-ci/impl-execute
+      with:
+        linux-docker-image: ${{ inputs.linux-docker-image }}
+        command: >
+          ctest
+          --test-dir "${WORK_DIR}/bld/sil-kit
+          ${{ inputs.ctest-args }}
+
+    - name: package cmake project
+      uses: ./.github/actions/sil-kit-ci/execute
+      with:
+        linux-docker-image: ${{ inputs.linux-docker-image }}
+        command: >
+          cmake
+          --build "${WORK_DIR}/bld/sil-kit"
+          --target package
+          ${{ inputs.cmake-package-args }}
+
+    - name: upload package as artifact
+      if: ${{ inputs.upload-artifacts == 'true' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.package-name }}
+        path: ${{ env.work-dir }}/pkg/sil-kit/SilKit-*-*.zip
+        retention-days: ${{ inputs.retention-days }}
+        if-no-files-found: 'error'

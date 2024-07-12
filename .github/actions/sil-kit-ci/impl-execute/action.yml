@@ -1,0 +1,65 @@
+name: sil-kit-ci/impl-execute
+
+description: >
+  Execute a command with arguments.
+  On Linux runners, the command is executed in a docker container using the `linux-docker-image`.
+  On Windows runners, the command is executed on the runner itself.
+
+inputs:
+
+  work-dir:
+    required: false
+    description: >
+      The command being executed must only access (read and write) files in the work-directory.
+      On Linux: volume-mounted into a docker container
+
+  relative-working-dir:
+    required: false
+    description: >
+      Relative path to the initial working directory inside the `work-directory` (can be empty)
+
+  linux-docker-image:
+    required: false
+    description: Docker image used under Linux.
+
+  command:
+    required: true
+    description: Command line to be executed.
+
+runs:
+  using: composite
+  steps:
+
+    - id: setup
+      shell: bash
+      run: |
+        die() { echo "::error topic=$1::$2" ; exit 1 ; }
+
+        _v="${{ inputs.work-dir }}"
+        _v=${_v:-"${{ env.work-dir }}"}
+        if [[ "$_v" == "" ]] ; then die "empty parameter" "`inputs.work-dir` or `env.work-dir` must not be empty" ; fi
+        echo "wd=${_v}" >> "$GITHUB_OUTPUTS"
+
+        _v="${{ inputs.relative-working-dir }}"
+        _v=${_v:-"${{ env.relative-working-dir }}"}
+        if [[ "$_v" == "" ]] ; then die "empty parameter" "`inputs.relative-working-dir` or `env.relative-working-dir` must not be empty" ; fi
+        echo "rwd=${_v}" >> "$GITHUB_OUTPUTS"
+
+    - name: (linux) execute command
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        WORK_DIR="/w"
+        docker run \
+          -v "${{ steps.setup.outputs.wd }}:/w" \
+          -w "/w/${{ steps.setup.outputs.rwd }}" \
+          "${{ inputs.linux-docker-image }}" \
+            ${{ inputs.command }}
+
+    - name: (windows) execute command
+      if: runner.os == 'Windows'
+      shell: bash
+      working-directory: ${{ steps.setup.outputs.wd }}${{ steps.setup.outputs.rwd }}
+      run: |
+        WORK_DIR="${{ steps.setup.outputs.wd }}"
+        ${{ inputs.command }}
