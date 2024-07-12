@@ -18,9 +18,6 @@ jobs:
     with:
       runs-on: ubuntu-22.04
       preset-name: ci
-      upload-artifacts: false
-      retention-days: 0
-      package-name: SilKit-Linux-Fast
       c-compiler: gcc-8
       cxx-compiler: g++-8
       cmake-configure-args: >-
@@ -33,9 +30,8 @@ jobs:
     with:
       runs-on: windows-2019
       preset-name: ci
-      upload-artifacts: false
-      retention-days: 0
-      package-name: SilKit-Linux-Fast
+      msvc-arch: x64
+      msvc-toolset: 14.1
       cmake-configure-args: >-
         -D CMAKE_C_FLAGS_RELEASE="/Od"
         -D CMAKE_CXX_FLAGS_RELEASE="/Od"
