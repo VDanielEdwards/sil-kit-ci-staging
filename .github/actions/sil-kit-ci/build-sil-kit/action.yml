@@ -76,7 +76,6 @@ runs:
       run: |
         # compute directories
         echo "work-dir=${{ steps.setup.outputs.work-dir }}" >> "$GITHUB_ENV"
-        echo "relative-working-dir=src/sil-kit" >> "$GITHUB_ENV"
 
     - shell: bash
       run: |
@@ -97,6 +96,8 @@ runs:
       uses: ./.github/actions/sil-kit-ci/impl-execute
       with:
         linux-docker-image: ${{ inputs.linux-docker-image }}
+        work-dir: ${{ env.work-dir }}
+        relative-working-dir: src/sil-kit
         command: >
           cmake
           -B "${WORK_DIR}/bld/sil-kit"
@@ -109,9 +110,11 @@ runs:
       uses: ./.github/actions/sil-kit-ci/impl-execute
       with:
         linux-docker-image: ${{ inputs.linux-docker-image }}
+        work-dir: ${{ env.work-dir }}
+        relative-working-dir: bld/sil-kit
         command: >
           cmake
-          --build "${WORK_DIR}/bld/sil-kit"
+          --build .
           --parallel
           ${{ inputs.cmake-build-args }}
 
@@ -119,18 +122,21 @@ runs:
       uses: ./.github/actions/sil-kit-ci/impl-execute
       with:
         linux-docker-image: ${{ inputs.linux-docker-image }}
+        work-dir: ${{ env.work-dir }}
+        relative-working-dir: bld/sil-kit
         command: >
           ctest
-          --test-dir "${WORK_DIR}/bld/sil-kit
           ${{ inputs.ctest-args }}
 
     - name: package cmake project
       uses: ./.github/actions/sil-kit-ci/execute
       with:
         linux-docker-image: ${{ inputs.linux-docker-image }}
+        work-dir: ${{ env.work-dir }}
+        relative-working-dir: bld/sil-kit
         command: >
           cmake
-          --build "${WORK_DIR}/bld/sil-kit"
+          --build .
           --target package
           ${{ inputs.cmake-package-args }}
 
