@@ -23,7 +23,7 @@ jobs:
       package-name: SilKit-Linux-Fast
       c-compiler: gcc-8
       cxx-compiler: g++-8
-      cmake-configure-args: >
+      cmake-configure-args: >-
         -D CMAKE_C_FLAGS_RELEASE="-g0 -O0"
         -D CMAKE_CXX_FLAGS_RELEASE="-g0 -O0"
 
@@ -36,6 +36,6 @@ jobs:
       upload-artifacts: false
       retention-days: 0
       package-name: SilKit-Linux-Fast
-      cmake-configure-args: >
+      cmake-configure-args: >-
         -D CMAKE_C_FLAGS_RELEASE="/Od"
         -D CMAKE_CXX_FLAGS_RELEASE="/Od"
