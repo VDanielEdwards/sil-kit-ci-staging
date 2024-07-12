@@ -3,6 +3,11 @@
     "configurePresets": [
 
         {
+            "name": "ci",
+            "inherits": [ "mixin-ninja", "mixin-release", "mixin-werror" ]
+        },
+
+        {
             "name": "ci-linux",
             "inherits": [ "mixin-ninja", "mixin-release", "mixin-werror", "mixin-ci-dirs", "mixin-ci-only-linux", "mixin-ci-linux-fast" ]
         },
