@@ -34,6 +34,20 @@ runs:
   using: composite
   steps:
 
+    - shell: bash
+      env:
+        STRING: ${{ inputs.command }}
+      run: |
+        # check if inputs.command contains a newline
+
+        # remove trailing newlines and spaces before the check
+        STRING="${STRING%%[[:space:]]}"
+
+        if [[ "${STRING}" == *$'\n'* ]] ; then
+          echo "::error title=invalid command::must not contain newline characters"
+          exit 1
+        fi
+
     - name: (linux) execute command
       if: runner.os == 'Linux'
       shell: bash
