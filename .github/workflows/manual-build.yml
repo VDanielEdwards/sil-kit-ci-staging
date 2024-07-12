@@ -15,11 +15,9 @@ on:
 
       preset-name:
         description: The CMake preset used for configuration and building
-        required: true
-        type: choice
-        options:
-          - ci-linux
-          - ci-windows
+        required: false
+        type: string
+        default: ci
 
       upload-artifacts:
         description: If true, the created packages are uploaded as artifacts
