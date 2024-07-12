@@ -48,7 +48,7 @@ runs:
     - name: (windows) execute command
       if: runner.os == 'Windows'
       shell: bash
-      working-directory: ${{ inputs.work-dir }}${{ inputs.relative-working-dir }}
+      working-directory: ${{ inputs.work-dir }}/${{ inputs.relative-working-dir }}
       run: |
         WORK_DIR="${{ inputs.work-dir }}"
         ${{ inputs.command }}
