@@ -9,11 +9,11 @@ inputs:
     required: true
 
   c-compiler:
-    description: C compiler used under Linux
+    description: C compiler
     required: true
 
   cxx-compiler:
-    description: C++ compiler used under Linux
+    description: C++ compiler
     required: true
 
   msvc-arch:
@@ -82,6 +82,10 @@ runs:
       run: |
         # pull docker image for building via cmake
         docker pull "${{ inputs.linux-docker-image }}"
+
+    - if: runner.os == 'Windows'
+      shell: powershell
+      run: .github/actions/sil-kit-ci/impl-setup/Install-RequiredVisualStudioComponents -InstallToolset ${{ inputs.msvc-toolset }}
 
     - name: (windows) setup msvc environment
       if: runner.os == 'Windows'
