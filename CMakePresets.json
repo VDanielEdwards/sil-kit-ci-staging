@@ -4,81 +4,8 @@
 
         {
             "name": "ci",
-            "inherits": [ "mixin-ninja", "mixin-release", "mixin-werror" ]
+            "inherits": [ "mixin-ninja", "mixin-relwithdebinfo", "mixin-werror" ]
         },
-
-        {
-            "name": "ci-linux",
-            "inherits": [ "mixin-ninja", "mixin-release", "mixin-werror", "mixin-ci-dirs", "mixin-ci-only-linux", "mixin-ci-linux-fast" ]
-        },
-
-        {
-            "name": "ci-windows",
-            "inherits": [ "mixin-ninja", "mixin-release", "mixin-werror", "mixin-ci-dirs", "mixin-ci-only-windows", "mixin-ci-msvc-fast" ]
-        },
-
-
-
-
-        {
-            "name": "mixin-ci-dirs",
-            "hidden": true,
-            "binaryDir": "$env{SIL_KIT_CI_CMAKE_BINARY_DIR}",
-            "installDir": "$env{SIL_KIT_CI_CMAKE_INSTALL_DIR}",
-            "cacheVariables": {
-                "CPACK_PACKAGE_DIRECTORY": "$env{SIL_KIT_CI_CMAKE_PACKAGE_DIR}"
-            }
-        },
-
-        {
-            "name": "mixin-ci-only-linux",
-            "hidden": true,
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Linux"
-            }
-        },
-
-        {
-            "name": "mixin-ci-only-windows",
-            "hidden": true,
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-
-        {
-            "name": "mixin-ci-msvc-fast",
-            "hidden": true,
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            },
-            "cacheVariables": {
-                "CMAKE_C_FLAGS_RELEASE": "/Od",
-                "CMAKE_CXX_FLAGS_RELEASE": "/Od"
-            }
-        },
-
-        {
-            "name": "mixin-ci-linux-fast",
-            "hidden": true,
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Linux"
-            },
-            "cacheVariables": {
-                "CMAKE_C_FLAGS_RELEASE": "-g0 -O0",
-                "CMAKE_CXX_FLAGS_RELEASE": "-g0 -O0"
-            }
-        },
-
-
 
 
         {
@@ -691,20 +618,6 @@
     "buildPresets": [
 
         {
-            "name": "ci-linux",
-            "configurePreset": "ci-linux"
-        },
-
-        {
-            "name": "ci-windows",
-            "configurePreset": "ci-windows"
-        },
-
-
-
-
-
-        {
             "name": "linux-base",
             "hidden": true,
             "condition": {
@@ -919,20 +832,6 @@
     ],
 
     "testPresets": [
-
-        {
-            "name": "ci-linux",
-            "configurePreset": "ci-linux"
-        },
-
-        {
-            "name": "ci-windows",
-            "configurePreset": "ci-windows"
-        },
-
-
-
-
 
         {
             "name": "linux-base",
