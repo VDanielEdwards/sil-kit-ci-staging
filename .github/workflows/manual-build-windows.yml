@@ -1,0 +1,77 @@
+name: 'Manual Windows Build'
+
+on:
+
+  workflow_dispatch:
+    inputs:
+
+      preset-name:
+        description: CMake preset
+        required: true
+        type: string
+        default: ci
+
+      runs-on:
+        description: Runner type
+        required: true
+        type: string
+        default: windows-2019
+
+      retention-days:
+        description: Artifact retention in days (0 disables uploads)
+        required: true
+        type: number
+        default: 0
+
+      msvc-arch:
+        description: Override the C compiler
+        required: true
+        type: string
+        default: x64
+
+      msvc-toolset:
+        description: Override the C++ compiler
+        required: true
+        type: string
+        default: '14.1'
+
+      cmake-configure-args:
+        description: Extra CMake configure arguments
+        required: false
+        type: string
+
+      cmake-build-args:
+        description: Extra CMake build arguments
+        required: false
+        type: string
+
+      ctest-args:
+        description: Extra CTest arguments
+        required: false
+        type: string
+        default: -R "^I?Test"
+
+      cmake-package-args:
+        description: Extra CMake package arguments
+        required: false
+        type: string
+
+jobs:
+
+  manual-build-windows:
+    name: Manual Windows Build (${{ inputs.preset-name }} on ${{ inputs.runs-on }})
+    uses: ./.github/workflows/call-build.yml
+    with:
+      runs-on: ${{ inputs.runs-on }}
+      preset-name: ${{ inputs.preset-name }}
+      upload-artifacts: ${{ inputs.retention-days > 0 && true || false }}
+      # NOTE: using fromJSON is a workaround for a bug in reusable workflows (workflow_call) with 'number' inputs
+      #       https://github.com/orgs/community/discussions/67182#discussioncomment-8617964
+      retention-days: '${{ fromJSON(inputs.retention-days) }}'
+      package-name: SilKit-Windows-Manual
+      msvc-arch: ${{ inputs.msvc-arch }}
+      msvc-toolset: '${{ inputs.msvc-toolset }}'
+      cmake-configure-args: ${{ inputs.cmake-configure-args }}
+      cmake-build-args: ${{ inputs.cmake-build-args }}
+      ctest-args: ${{ inputs.ctest-args }}
+      cmake-package-args: ${{ inputs.cmake-package-args }}

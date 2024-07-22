@@ -1,0 +1,96 @@
+name: Build
+
+on:
+
+  workflow_call:
+    inputs:
+
+      runs-on:
+        required: true
+        type: string
+
+      preset-name:
+        required: true
+        type: string
+
+      upload-artifacts:
+        required: false
+        type: boolean
+        default: false
+
+      retention-days:
+        required: false
+        type: number
+        default: 0
+
+      package-name:
+        required: false
+        type: string
+
+      linux-docker-image:
+        required: false
+        type: string
+
+      c-compiler:
+        required: false
+        type: string
+
+      cxx-compiler:
+        required: false
+        type: string
+
+      msvc-arch:
+        required: false
+        type: string
+
+      msvc-toolset:
+        required: false
+        type: string
+
+      cmake-configure-args:
+        required: false
+        type: string
+
+      cmake-build-args:
+        required: false
+        type: string
+
+      ctest-args:
+        required: false
+        type: string
+
+      cmake-package-args:
+        required: false
+        type: string
+
+jobs:
+
+  run:
+    name: ${{ inputs.preset-name }} on ${{ inputs.runs-on }}
+
+    environment: public-github-runners
+    runs-on: ${{ inputs.runs-on }}
+
+    steps:
+
+      - name: checkout sil-kit workflows and actions
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          sparse-checkout: .github
+
+      - uses: ./.github/actions/sil-kit-ci/build-sil-kit
+        with:
+          preset-name: ${{ inputs.preset-name }}
+          upload-artifacts: ${{ inputs.upload-artifacts }}
+          retention-days: ${{ inputs.retention-days }}
+          package-name: ${{ inputs.package-name }}
+          linux-docker-image: ${{ inputs.linux-docker-image || 'ghcr.io/mariusbgm/sil-kit-ci-ubuntu-18.04:main' }}
+          c-compiler: ${{ inputs.c-compiler }}
+          cxx-compiler: ${{ inputs.cxx-compiler }}
+          msvc-arch: ${{ inputs.msvc-arch || 'x64' }}
+          msvc-toolset: ${{ inputs.msvc-toolset || '14.1' }}
+          cmake-configure-args: ${{ inputs.cmake-configure-args }}
+          cmake-build-args: ${{ inputs.cmake-build-args }}
+          ctest-args: ${{ inputs.outputs.ctest-args || '-R "^I?Test"' }}
+          cmake-package-args: ${{ inputs.cmake-package-args }}

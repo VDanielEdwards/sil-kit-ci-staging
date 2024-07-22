@@ -1,0 +1,68 @@
+name: sil-kit-ci/impl-execute
+
+description: >
+  Execute a command with arguments.
+
+  Access to files in the `work-dir` must use the `WORK_DIR` environment variable in the command.
+  This is required to provide transparent support for execution of the command inside of a docker container.
+
+  On Linux runners, the command is executed in a docker container using the `linux-docker-image`.
+  On Windows runners, the command is executed on the runner itself.
+
+inputs:
+
+  work-dir:
+    required: false
+    description: >
+      The command being executed must only access (read and write) files in the work-directory.
+      On Linux: volume-mounted into a docker container
+
+  relative-working-dir:
+    required: false
+    description: >
+      Relative path to the initial working directory inside the `work-directory` (can be empty)
+
+  linux-docker-image:
+    required: false
+    description: Docker image used under Linux.
+
+  command:
+    required: true
+    description: Command line to be executed.
+
+runs:
+  using: composite
+  steps:
+
+    - shell: bash
+      env:
+        STRING: ${{ inputs.command }}
+      run: |
+        # check if inputs.command contains a newline
+
+        # remove trailing newlines and spaces before the check
+        STRING="${STRING%%[[:space:]]}"
+
+        if [[ "${STRING}" == *$'\n'* ]] ; then
+          echo "::error title=invalid command::must not contain newline characters"
+          exit 1
+        fi
+
+    - name: (linux) execute command
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        WORK_DIR="/w"
+        docker run \
+          -v "${{ inputs.work-dir }}:/w" \
+          -w "/w/${{ inputs.relative-working-dir }}" \
+          "${{ inputs.linux-docker-image }}" \
+            ${{ inputs.command }}
+
+    - name: (windows) execute command
+      if: runner.os == 'Windows'
+      shell: powershell
+      working-directory: ${{ inputs.work-dir }}/${{ inputs.relative-working-dir }}
+      run: |
+        $WORK_DIR = "${{ inputs.work-dir }}"
+        ${{ inputs.command }}

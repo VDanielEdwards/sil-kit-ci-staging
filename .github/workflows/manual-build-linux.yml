@@ -1,0 +1,78 @@
+name: 'Manual Linux Build'
+
+on:
+
+  workflow_dispatch:
+    inputs:
+
+      preset-name:
+        description: CMake preset
+        required: true
+        type: string
+        default: ci
+
+      docker-image:
+        description: Docker image
+        required: true
+        type: string
+        default: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-18.04:main
+
+      retention-days:
+        description: Artifact retention in days (0 disables uploads)
+        required: true
+        type: number
+        default: 0
+
+      c-compiler:
+        description: Override the C compiler
+        required: true
+        type: string
+        default: gcc-8
+
+      cxx-compiler:
+        description: Override the C++ compiler
+        required: true
+        type: string
+        default: g++-8
+
+      cmake-configure-args:
+        description: Extra CMake configure arguments
+        required: false
+        type: string
+
+      cmake-build-args:
+        description: Extra CMake build arguments
+        required: false
+        type: string
+
+      ctest-args:
+        description: Extra CTest arguments
+        required: false
+        type: string
+        default: -R "^I?Test"
+
+      cmake-package-args:
+        description: Extra CMake package arguments
+        required: false
+        type: string
+
+jobs:
+
+  manual-build-linux:
+    name: Manual Linux Build (${{ inputs.preset-name }} on ${{ inputs.docker-image }})
+    uses: ./.github/workflows/call-build.yml
+    with:
+      runs-on: ubuntu-22.04
+      preset-name: ${{ inputs.preset-name }}
+      upload-artifacts: ${{ inputs.retention-days > 0 && true || false }}
+      # NOTE: using fromJSON is a workaround for a bug in reusable workflows (workflow_call) with 'number' inputs
+      #       https://github.com/orgs/community/discussions/67182#discussioncomment-8617964
+      retention-days: '${{ fromJSON(inputs.retention-days) }}'
+      package-name: SilKit-Linux-Manual
+      linux-docker-image: ${{ inputs.docker-image }}
+      c-compiler: ${{ inputs.c-compiler }}
+      cxx-compiler: ${{ inputs.cxx-compiler }}
+      cmake-configure-args: ${{ inputs.cmake-configure-args }}
+      cmake-build-args: ${{ inputs.cmake-build-args }}
+      ctest-args: ${{ inputs.ctest-args }}
+      cmake-package-args: ${{ inputs.cmake-package-args }}
