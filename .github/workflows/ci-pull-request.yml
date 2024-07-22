@@ -18,6 +18,7 @@ jobs:
     with:
       runs-on: ubuntu-22.04
       preset-name: ci
+      docker-image: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-18.04:main
       c-compiler: gcc-8
       cxx-compiler: g++-8
       cmake-configure-args: >-
@@ -28,8 +29,9 @@ jobs:
     name: 'Windows (PR, x64)'
     uses: ./.github/workflows/call-build.yml
     with:
-      runs-on: windows-2019
+      runs-on: windows-2022
       preset-name: ci
+      docker-image: ghcr.io/vdanieledwards/sil-kit-ci-docker:ci-windows-2022-x86.x64
       msvc-arch: x64
       msvc-toolset: 14.1
       cmake-configure-args: >-

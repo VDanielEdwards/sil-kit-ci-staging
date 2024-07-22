@@ -4,7 +4,7 @@ description: Setup the environment for the other CI actions.
 
 inputs:
 
-  linux-docker-image:
+  docker-image:
     description: Docker image used under Linux
     required: true
 
@@ -77,19 +77,18 @@ runs:
 
     # setup: prepare build environment
 
-    - if: runner.os == 'Linux'
-      shell: bash
+    - shell: bash
       run: |
         # pull docker image for building via cmake
-        docker pull "${{ inputs.linux-docker-image }}"
+        docker pull "${{ inputs.docker-image }}"
 
-    - if: runner.os == 'Windows'
-      shell: powershell
-      run: .github/actions/sil-kit-ci/impl-setup/Install-RequiredVisualStudioComponents -InstallToolset ${{ inputs.msvc-toolset }}
+    # - if: runner.os == 'Windows'
+    #   shell: powershell
+    #   run: .github/actions/sil-kit-ci/impl-setup/Install-RequiredVisualStudioComponents -InstallToolset ${{ inputs.msvc-toolset }}
 
-    - name: (windows) setup msvc environment
-      if: runner.os == 'Windows'
-      uses: ilammy/msvc-dev-cmd@v1.13.0
-      with:
-        arch: ${{ inputs.msvc-arch }}
-        toolset: ${{ inputs.msvc-toolset }}
+    # - name: (windows) setup msvc environment
+    #   if: runner.os == 'Windows'
+    #   uses: ilammy/msvc-dev-cmd@v1.13.0
+    #   with:
+    #     arch: ${{ inputs.msvc-arch }}
+    #     toolset: ${{ inputs.msvc-toolset }}

@@ -27,7 +27,7 @@ on:
         required: false
         type: string
 
-      linux-docker-image:
+      docker-image:
         required: false
         type: string
 
@@ -85,7 +85,7 @@ jobs:
           upload-artifacts: ${{ inputs.upload-artifacts }}
           retention-days: ${{ inputs.retention-days }}
           package-name: ${{ inputs.package-name }}
-          linux-docker-image: ${{ inputs.linux-docker-image || 'ghcr.io/mariusbgm/sil-kit-ci-ubuntu-18.04:main' }}
+          docker-image: ${{ inputs.docker-image }}
           c-compiler: ${{ inputs.c-compiler }}
           cxx-compiler: ${{ inputs.cxx-compiler }}
           msvc-arch: ${{ inputs.msvc-arch || 'x64' }}

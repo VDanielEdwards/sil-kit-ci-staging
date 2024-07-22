@@ -8,7 +8,7 @@ inputs:
     description: The preset name from CMakePresets.json
     required: true
 
-  linux-docker-image:
+  docker-image:
     description: Docker image used under Linux
     required: true
 
@@ -65,7 +65,7 @@ runs:
     - uses: ./.github/actions/sil-kit-ci/impl-setup
       id: setup
       with:
-        linux-docker-image: ${{ inputs.linux-docker-image }}
+        docker-image: ${{ inputs.docker-image }}
         c-compiler: ${{ inputs.c-compiler }}
         cxx-compiler: ${{ inputs.cxx-compiler }}
         msvc-arch: ${{ inputs.msvc-arch }}
@@ -95,50 +95,64 @@ runs:
     - name: configure cmake project
       uses: ./.github/actions/sil-kit-ci/impl-execute
       with:
-        linux-docker-image: ${{ inputs.linux-docker-image }}
+        docker-image: ${{ inputs.docker-image }}
         work-dir: ${{ env.work-dir }}
         relative-working-dir: src/sil-kit
-        command: >
-          cmake
-          -B "${WORK_DIR}/bld/sil-kit"
-          --preset "${{ inputs.preset-name }}"
-          ${{ steps.setup.outputs.cmake-configure-args }}
-          ${{ inputs.cmake-configure-args }}
-          -D CPACK_PACKAGE_DIRECTORY="${WORK_DIR}/pkg/sil-kit"
+        command: |
+          cmake \
+              -B "${CI_TEMP_DIR}/bld/sil-kit" \
+              --preset "${{ inputs.preset-name }}" \
+              ${{ steps.setup.outputs.cmake-configure-args }} \
+              ${{ inputs.cmake-configure-args }} \
+              -D CPACK_PACKAGE_DIRECTORY="${CI_WORK_DIR}/pkg/sil-kit"
 
-    - name: build cmake project
-      uses: ./.github/actions/sil-kit-ci/impl-execute
-      with:
-        linux-docker-image: ${{ inputs.linux-docker-image }}
-        work-dir: ${{ env.work-dir }}
-        relative-working-dir: bld/sil-kit
-        command: >
-          cmake
-          --build .
-          --parallel
-          ${{ inputs.cmake-build-args }}
+          cmake \
+              --build "${CI_TEMP_DIR}/bld/sil-kit" \
+              --parallel \
+              ${{ inputs.cmake-build-args }}
 
-    - name: test cmake project
-      uses: ./.github/actions/sil-kit-ci/impl-execute
-      with:
-        linux-docker-image: ${{ inputs.linux-docker-image }}
-        work-dir: ${{ env.work-dir }}
-        relative-working-dir: bld/sil-kit
-        command: >
-          ctest
-          ${{ inputs.ctest-args }}
+          ctest \
+              --test-dir "${CI_TEMP_DIR}/bld/sil-kit" \
+              ${{ inputs.ctest-args }}
 
-    - name: package cmake project
-      uses: ./.github/actions/sil-kit-ci/impl-execute
-      with:
-        linux-docker-image: ${{ inputs.linux-docker-image }}
-        work-dir: ${{ env.work-dir }}
-        relative-working-dir: bld/sil-kit
-        command: >
-          cmake
-          --build .
-          --target package
-          ${{ inputs.cmake-package-args }}
+          cmake \
+              --build "${CI_TEMP_DIR}/bld/sil-kit" \
+              --target package \
+              ${{ inputs.cmake-package-args }}
+
+    # - name: build cmake project
+    #   uses: ./.github/actions/sil-kit-ci/impl-execute
+    #   with:
+    #     docker-image: ${{ inputs.docker-image }}
+    #     work-dir: ${{ env.work-dir }}
+    #     relative-working-dir: bld/sil-kit
+    #     command: >
+    #       cmake
+    #       --build .
+    #       --parallel
+    #       ${{ inputs.cmake-build-args }}
+
+    # - name: test cmake project
+    #   uses: ./.github/actions/sil-kit-ci/impl-execute
+    #   with:
+    #     docker-image: ${{ inputs.docker-image }}
+    #     work-dir: ${{ env.work-dir }}
+    #     relative-working-dir: bld/sil-kit
+    #     command: >
+    #       ctest
+    #       ${{ inputs.ctest-args }}
+
+    # - name: package cmake project
+    #   uses: ./.github/actions/sil-kit-ci/impl-execute
+    #   with:
+    #     docker-image: ${{ inputs.docker-image }}
+    #     work-dir: ${{ env.work-dir }}
+    #     relative-working-dir: bld/sil-kit
+    #     command: >
+    #       cmake
+    #       --build .
+    #       --target package
+    #       ${{ inputs.cmake-package-args }}
 
     - name: upload package as artifact
       if: ${{ inputs.upload-artifacts == 'true' }}

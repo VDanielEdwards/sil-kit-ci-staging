@@ -69,7 +69,7 @@ jobs:
       #       https://github.com/orgs/community/discussions/67182#discussioncomment-8617964
       retention-days: '${{ fromJSON(inputs.retention-days) }}'
       package-name: SilKit-Linux-Manual
-      linux-docker-image: ${{ inputs.docker-image }}
+      docker-image: ${{ inputs.docker-image }}
       c-compiler: ${{ inputs.c-compiler }}
       cxx-compiler: ${{ inputs.cxx-compiler }}
       cmake-configure-args: ${{ inputs.cmake-configure-args }}

@@ -6,8 +6,7 @@ description: >
   Access to files in the `work-dir` must use the `WORK_DIR` environment variable in the command.
   This is required to provide transparent support for execution of the command inside of a docker container.
 
-  On Linux runners, the command is executed in a docker container using the `linux-docker-image`.
-  On Windows runners, the command is executed on the runner itself.
+  The command is executed in a docker container using the input `docker-image`.
 
 inputs:
 
@@ -22,9 +21,9 @@ inputs:
     description: >
       Relative path to the initial working directory inside the `work-directory` (can be empty)
 
-  linux-docker-image:
+  docker-image:
     required: false
-    description: Docker image used under Linux.
+    description: Docker image used to run the command.
 
   command:
     required: true
@@ -34,35 +33,62 @@ runs:
   using: composite
   steps:
 
-    - shell: bash
-      env:
-        STRING: ${{ inputs.command }}
-      run: |
-        # check if inputs.command contains a newline
+    # - shell: bash
+    #   env:
+    #     STRING: ${{ inputs.command }}
+    #   run: |
+    #     # check if inputs.command contains a newline
 
-        # remove trailing newlines and spaces before the check
-        STRING="${STRING%%[[:space:]]}"
+    #     # remove trailing newlines and spaces before the check
+    #     STRING="${STRING%%[[:space:]]}"
 
-        if [[ "${STRING}" == *$'\n'* ]] ; then
-          echo "::error title=invalid command::must not contain newline characters"
-          exit 1
-        fi
+    #     if [[ "${STRING}" == *$'\n'* ]] ; then
+    #       echo "::error title=invalid command::must not contain newline characters"
+    #       exit 1
+    #     fi
 
     - name: (linux) execute command
       if: runner.os == 'Linux'
       shell: bash
       run: |
-        WORK_DIR="/w"
+        IMPL_EXECUTE_CI_DIR="${{ github.workspace }}/impl-execute/ci"
+
+        mkdir -p "${IMPL_EXECUTE_CI_DIR}"
+        cat <<<"${INPUTS_COMMAND}" > "${IMPL_EXECUTE_CI_DIR}/command.sh"
+
+        CI_WORK_DIR="/w"
+        CI_TEMP_DIR="/tmp"
+
         docker run \
-          -v "${{ inputs.work-dir }}:/w" \
-          -w "/w/${{ inputs.relative-working-dir }}" \
-          "${{ inputs.linux-docker-image }}" \
-            ${{ inputs.command }}
+            -v "${IMPL_EXECUTE_CI_DIR}:/ci" \
+            -v "${{ inputs.work-dir }}:/w" \
+            -w "/w/${{ inputs.relative-working-dir }}" \
+            -e "CI_WORK_DIR=${CI_WORK_DIR}" \
+            -e "CI_TEMP_DIR=${CI_TEMP_DIR}" \
+            "${{ inputs.docker-image }}" \
+            bash "/ci/command.sh"
 
     - name: (windows) execute command
       if: runner.os == 'Windows'
       shell: powershell
       working-directory: ${{ inputs.work-dir }}/${{ inputs.relative-working-dir }}
       run: |
-        $WORK_DIR = "${{ inputs.work-dir }}"
-        ${{ inputs.command }}
+        $IMPL_EXECUTE_CI_DIR = "${{ github.workspace }}/impl-execute/ci"
+
+        $null = New-Item -Path "${IMPL_EXECUTE_CI_DIR}" -Type Directory -Force
+        $env:INPUTS_COMMAND | Out-File "${IMPL_EXECUTE_CI_DIR}/command.ps1"
+
+        CI_WORK_DIR="C:/w"
+        CI_TEMP_DIR="C:/Windows/Temp"
+
+        docker run `
+            -v "${IMPL_EXECUTE_CI_DIR}:C:/ci" `
+            -v "${{ inputs.work-dir }}:C:/w" `
+            -w "C:\w\${{ inputs.relative-working-dir }}" `
+            -e "CI_WORK_DIR=${CI_WORK_DIR}" `
+            -e "CI_TEMP_DIR=${CI_TEMP_DIR}" `
+            "${{ inputs.docker-image }}" `
+            C:/ci/command.ps1 
+
+# $WORK_DIR = "${{ inputs.work-dir }}"
+# ${{ inputs.command }}
